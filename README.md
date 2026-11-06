@@ -47,12 +47,10 @@ Pequenas e médias empresas sabem que precisam modernizar a operação, mas não
 ### Estrutura do Repositório
 
 ```text
-├── index.html              Estrutura da página
-├── css/
-│   └── style.css           Identidade visual, animações e impressão
-├── js/
-│   ├── app.js              Perguntas, motor de cálculo, laudo e gráfico
-│   └── tailwind.config.js  Cores e fontes do Tailwind
+├── index.html           Estrutura da página
+├── style.css            Identidade visual, animações e impressão
+├── app.js               Perguntas, motor de cálculo, laudo e gráfico
+├── tailwind.config.js   Cores e fontes do Tailwind
 └── README.md
 ```
 
