@@ -32,67 +32,156 @@
 </script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <style>
-  :root { color-scheme: light; }
-  html { scroll-behavior: smooth; scroll-padding-bottom: 96px; }
-  body { background: #E7EEEA; color: #12343B; font-family: Archivo, system-ui, sans-serif; }
+  :root {
+    color-scheme: light;
+    --tinta: #12343B; --tinta-funda: #0C262C; --grafite: #4A6066; --papel: #E7EEEA; --folha: #FCFDFB;
+    --linha: #C5D3CD; --carimbo: #2742C8; --marca: #EEF36A;
+    --grao: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23g)' opacity='.1'/%3E%3C/svg%3E");
+    --sair: cubic-bezier(.72, 0, .18, 1);
+  }
+  [hidden] { display: none !important; }
+  html { scroll-behavior: smooth; scroll-padding-bottom: 110px; }
+  body { background: var(--papel); color: var(--tinta); font-family: Archivo, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  ::selection { background: var(--marca); color: var(--tinta); }
 
   .titulo-largo { font-stretch: 78%; font-weight: 800; letter-spacing: -0.01em; }
 
-  /* Campos de identificação */
-  .campo { width: 100%; min-height: 46px; padding: 10px 12px; background: #FCFDFB; border: 1px solid #8FA5A0; border-radius: 3px; color: #12343B; font-size: 16px; }
-  .campo:focus-visible { outline: 3px solid #2742C8; outline-offset: 1px; }
+  /* Tarjas: o conteúdo nasce coberto e se explicita */
+  .tarjado { position: relative; display: inline-block; }
+  .tarjado::after { content: ''; position: absolute; inset: -.04em -.1em; background: var(--cor-tarja, var(--tinta)); transform-origin: right; animation: tarja-sai .62s var(--sair) var(--d, 0s) both; }
+  @keyframes tarja-sai { from { transform: scaleX(1); } to { transform: scaleX(0); } }
 
-  /* Alternativas das perguntas */
-  .opcao { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border: 1px solid #C5D3CD; background: #FCFDFB; cursor: pointer; line-height: 1.35; font-size: 15px; }
+  /* Abertura */
+  .abertura { position: relative; overflow: hidden; background: var(--tinta) var(--grao); color: #fff; }
+  .abertura-grade { display: grid; gap: 48px; align-items: center; min-height: min(calc(100svh - 84px), 760px); padding-block: 28px 72px; }
+  @media (min-width: 1024px) { .abertura-grade { grid-template-columns: minmax(0, 1.42fr) minmax(0, 1fr); gap: 56px; } }
+  .manchete { font-size: clamp(42px, 5.5vw, 84px); line-height: .98; font-stretch: 75%; font-weight: 800; letter-spacing: -.012em; }
+  .manchete .tarjado { display: block; width: fit-content; --cor-tarja: var(--marca); }
+  .manchete .tarjado + .tarjado { margin-top: .06em; }
+
+  .vitrine { perspective: 1100px; }
+  .vit-folha { position: relative; max-width: 410px; margin-inline: auto; padding: 24px 26px 22px; background: var(--folha); color: var(--tinta); border-radius: 2px; box-shadow: 0 34px 60px -26px rgba(0, 0, 0, .7), 0 3px 0 #C9D6D0, 0 6px 0 #AEBFB9; transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) rotate(2.2deg); transition: transform .35s ease-out; }
+  .vit-topo { display: flex; justify-content: space-between; gap: 12px; padding-bottom: 8px; border-bottom: 2px solid var(--tinta); font-size: 12.5px; font-weight: 600; }
+  .vit-empresa { margin-top: 14px; font-size: 25px; line-height: 1.05; }
+  .vit-nota { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 12px; }
+  .vit-num { font-size: 66px; line-height: 1; font-variant-numeric: tabular-nums; }
+  .vit-linha { display: grid; grid-template-columns: 82px 1fr 38px; gap: 10px; align-items: center; padding-block: 6px; border-top: 1px solid var(--linha); font-size: 13.5px; font-weight: 600; }
+  .vit-linha b { justify-self: end; font-variant-numeric: tabular-nums; }
+  .vit-pista { margin-top: 12px; font-family: "Source Serif 4", Georgia, serif; font-size: 14.5px; line-height: 1.45; }
+  .vit-folha .vit-carimbo { --tinta-carimbo: #8A5A00; flex: none; padding: 7px 10px 5px; animation: bater .38s cubic-bezier(.3, 1.3, .5, 1) 2s both; }
+  .vit-folha .vit-carimbo strong { font-size: 19px; }
+
+  /* Campos */
+  .campo { width: 100%; min-height: 48px; padding: 10px 12px; background: var(--folha); border: 1px solid #8FA5A0; border-radius: 4px; color: var(--tinta); font-size: 16px; transition: border-color .15s, box-shadow .15s; }
+  .campo:hover { border-color: var(--tinta); }
+  .campo:focus-visible { outline: none; border-color: var(--carimbo); box-shadow: 0 0 0 3px rgba(39, 66, 200, .28); }
+
+  /* Alternativas */
+  .opcao { display: flex; gap: 11px; align-items: flex-start; padding: 11px 13px; border: 1px solid var(--linha); background: var(--folha); cursor: pointer; line-height: 1.35; font-size: 15px; transition: background-color .16s, color .16s, border-color .16s; }
   .opcao + .opcao { margin-top: -1px; }
-  .opcao:first-of-type { border-radius: 3px 3px 0 0; }
-  .opcao:last-of-type { border-radius: 0 0 3px 3px; }
-  .opcao:hover { background: #F0F5F2; }
-  .opcao input { appearance: none; flex: none; width: 18px; height: 18px; margin-top: 1px; border: 1.5px solid #4A6066; border-radius: 50%; background: #fff; }
-  .opcao input:checked { border: 5.5px solid #2742C8; }
-  .opcao input:focus-visible { outline: 3px solid #2742C8; outline-offset: 2px; }
-  .opcao:has(input:checked) { position: relative; z-index: 1; border-color: #2742C8; background: #EDF0FC; }
+  .opcao:first-of-type { border-radius: 6px 6px 0 0; }
+  .opcao:last-of-type { border-radius: 0 0 6px 6px; }
+  .opcao:hover { background: #EFF4F1; }
+  .opcao input { appearance: none; flex: none; width: 18px; height: 18px; margin-top: 1px; border: 1.5px solid var(--grafite); border-radius: 50%; background: #fff; }
+  .opcao input:focus-visible { outline: 3px solid var(--carimbo); outline-offset: 3px; }
+  .opcao:has(input:checked) { position: relative; z-index: 1; border-color: var(--carimbo); background: var(--carimbo); color: #fff; font-weight: 500; }
+  .opcao input:checked { border: 5px solid #fff; background: var(--carimbo); animation: marcar .24s ease-out; }
+  .opcao input:checked:focus-visible { outline-color: var(--marca); }
+  @keyframes marcar { from { transform: scale(.55); } }
 
-  .botao { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 10px 18px; border-radius: 3px; font-weight: 600; font-size: 15px; cursor: pointer; text-decoration: none; }
+  .pilar-nota { margin-top: 16px; max-width: 200px; }
+  .pilar-num { font-size: 42px; line-height: 1; font-variant-numeric: tabular-nums; }
+
+  /* Botões */
+  .botao { display: inline-flex; align-items: center; justify-content: center; min-height: 46px; padding: 10px 20px; border-radius: 4px; font-weight: 650; font-size: 15.5px; cursor: pointer; text-decoration: none; transition: transform .14s, background-color .14s, box-shadow .14s; }
   .botao:focus-visible { outline: 3px solid #8FA9FF; outline-offset: 2px; }
-  .botao-principal { background: #2742C8; color: #fff; }
-  .botao-principal:hover { background: #1D33A3; }
+  .botao:active { transform: translateY(1px); }
+  .botao-marca { background: var(--marca); color: var(--tinta); box-shadow: 0 3px 0 #B9BF3F; }
+  .botao-marca:hover { background: #F6FA8C; }
+  .botao-marca:active { box-shadow: 0 2px 0 #B9BF3F; }
   .botao-contorno { border: 1px solid currentColor; }
-  .botao-contorno:hover { background: rgba(127, 150, 150, .16); }
-  .botao[disabled] { opacity: .5; cursor: not-allowed; }
+  .botao-contorno:hover { background: rgba(255, 255, 255, .12); }
+  .botao-texto { min-height: 44px; padding-inline: 10px; font-size: 14.5px; color: #D2DFDB; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+  .botao-texto:hover { color: #fff; }
+  .botao-texto:focus-visible { outline: 3px solid #8FA9FF; border-radius: 3px; }
 
-  /* Folha do laudo */
-  .folha { background: #FCFDFB; box-shadow: 0 1px 0 #B5C5BF, 0 18px 40px -24px rgba(18, 52, 59, .45); }
+  /* Painel de progresso */
+  .painel { position: sticky; bottom: 12px; z-index: 20; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 22px; margin-block: 26px 28px; padding: 10px 12px 10px 18px; border-radius: 10px; background: var(--tinta) var(--grao); color: #fff; box-shadow: 0 16px 34px -14px rgba(12, 38, 44, .75); }
+  .trilha { display: flex; gap: 14px; flex-wrap: wrap; }
+  .trilha a { display: inline-flex; align-items: center; gap: 6px; min-height: 30px; font-size: 13.5px; color: #D2DFDB; text-decoration: none; }
+  .trilha a:hover { color: #fff; }
+  .trilha a:focus-visible { outline: 2px solid var(--marca); outline-offset: 2px; border-radius: 2px; }
+  .trilha i { width: 12px; height: 12px; border-radius: 3px; border: 1.5px solid #6F8E90; transition: background-color .2s, border-color .2s, transform .2s; }
+  .trilha i + i { margin-left: -3px; }
+  .trilha i.feita { background: var(--marca); border-color: var(--marca); transform: rotate(45deg) scale(.86); }
 
-  /* O carimbo: a marca desta página */
-  .carimbo { --tinta-carimbo: #2742C8; display: inline-block; padding: 9px 16px 7px; border: 3.5px solid var(--tinta-carimbo); border-radius: 7px; outline: 1.5px solid var(--tinta-carimbo); outline-offset: 2.5px; color: var(--tinta-carimbo); text-align: center; text-transform: uppercase; transform: rotate(-5deg); mix-blend-mode: multiply; font-stretch: 75%; line-height: 1.05; }
-  .carimbo strong { display: block; font-size: 30px; font-weight: 800; letter-spacing: .02em; white-space: nowrap; }
+  @media (max-width: 767px) {
+    .painel { gap: 4px 10px; padding: 8px 10px 8px 14px; }
+    .painel #status-texto { flex: 1 1 0; font-size: 14.5px; line-height: 1.2; }
+    .painel > div { margin-left: 0; }
+    .painel .botao { min-height: 40px; padding: 6px 14px; font-size: 14.5px; }
+    .trilha { order: 3; width: 100%; flex-wrap: nowrap; justify-content: space-between; gap: 6px; }
+    .trilha a { gap: 4px; font-size: 12.5px; }
+    .trilha i { width: 10px; height: 10px; }
+    .painel.completa .trilha { display: none; }
+  }
+
+  /* Mesa e folha */
+  .mesa { overflow-x: clip; background: var(--tinta) var(--grao); color: #fff; }
+  #secao-laudo { isolation: isolate; }
+  .folha { position: relative; background: var(--folha); color: var(--tinta); box-shadow: 0 40px 70px -34px rgba(0, 0, 0, .75); }
+  .folha::before, .folha::after { content: ''; position: absolute; inset: 0; z-index: -1; background: #DDE6E1; box-shadow: 0 12px 30px -18px rgba(0, 0, 0, .6); }
+  .folha::before { transform: rotate(.7deg); }
+  .folha::after { background: #C9D6D0; transform: rotate(-.8deg); z-index: -2; }
+
+  /* Folha em branco: cada resposta abre uma tarja */
+  .fantasma { max-width: 640px; margin-inline: auto; padding: 34px 30px; background: rgba(252, 253, 251, .07); border: 1px solid rgba(210, 223, 219, .3); border-radius: 3px; }
+  .fantasma-linhas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 22px; margin-top: 22px; }
+  .fantasma-linhas li { position: relative; padding: 6px 10px; overflow: hidden; color: var(--marca); font-weight: 600; font-size: 15px; }
+  .fantasma-linhas li::after { content: ''; position: absolute; inset: 0; background: #D2DFDB; transform-origin: right; transition: transform .5s var(--sair); }
+  .fantasma-linhas li.aberta::after { transform: scaleX(0); }
+
+  /* Carimbo com textura de tinta */
+  .carimbo { --tinta-carimbo: #2742C8; display: inline-block; padding: 9px 16px 7px; border: 3.5px solid var(--tinta-carimbo); border-radius: 7px; outline: 1.5px solid var(--tinta-carimbo); outline-offset: 2.5px; color: var(--tinta-carimbo); text-align: center; text-transform: uppercase; transform: rotate(-5deg); mix-blend-mode: multiply; filter: url(#tinta-falhada); font-stretch: 75%; line-height: 1.05; }
+  .carimbo strong { display: block; font-size: 32px; font-weight: 800; letter-spacing: .02em; white-space: nowrap; }
   .carimbo span { display: block; font-size: 12px; font-weight: 600; letter-spacing: .05em; }
   .carimbo.batendo { animation: bater .38s cubic-bezier(.3, 1.3, .5, 1) both; }
+  .revelando .carimbo.batendo { animation-delay: 1.15s; }
   @keyframes bater {
-    0% { transform: rotate(-11deg) scale(1.9); opacity: 0; }
-    65% { transform: rotate(-5deg) scale(.96); opacity: 1; }
+    0% { transform: rotate(-11deg) scale(2); opacity: 0; }
+    65% { transform: rotate(-5deg) scale(.95); opacity: 1; }
     100% { transform: rotate(-5deg) scale(1); opacity: 1; }
   }
 
+  /* Revelação do laudo */
+  .rev { position: relative; width: fit-content; max-width: 100%; }
+  .revelando .rev::after { content: ''; position: absolute; inset: -2px -6px; background: var(--tinta); transform-origin: right; animation: tarja-sai .6s var(--sair) var(--d, .4s) both; }
+
+  .marca-texto { padding: 1px 3px; margin-inline: -3px; background-image: linear-gradient(100deg, var(--marca), #F4F78B 96%, transparent); background-repeat: no-repeat; background-size: 0% 92%; background-position: 0 60%; -webkit-box-decoration-break: clone; box-decoration-break: clone; transition: background-size .7s var(--sair); }
+  .marca-texto.marcada { background-size: 100% 92%; }
+
   .barra-nota { height: 6px; background: #DCE6E1; border-radius: 3px; overflow: hidden; }
-  .barra-nota i { display: block; height: 100%; background: #12343B; border-radius: 3px; transition: width .3s ease; }
+  .barra-nota i { display: block; height: 100%; background: var(--tinta); border-radius: 3px; transition: width .55s var(--sair); }
 
   .texto-laudo { font-family: "Source Serif 4", Georgia, serif; font-size: 16.5px; line-height: 1.6; }
 
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
-    .carimbo.batendo { animation: none; }
-    .barra-nota i { transition: none; }
+    .tarjado::after, .revelando .rev::after { display: none; }
+    .carimbo.batendo, .vit-folha .vit-carimbo, .opcao input:checked { animation: none; }
+    .barra-nota i, .fantasma-linhas li::after, .marca-texto, .vit-folha { transition: none; }
   }
 
   @media print {
     @page { size: A4; margin: 14mm; }
     * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    body { background: #fff; }
+    body, .mesa { background: #fff; }
     .nao-imprimir { display: none !important; }
-    main, #secao-laudo { padding: 0 !important; margin: 0 !important; max-width: none !important; }
+    main, .mesa, #secao-laudo { padding: 0 !important; margin: 0 !important; max-width: none !important; }
     .folha { background: #fff; box-shadow: none; padding: 0 !important; }
+    .folha::before, .folha::after, .rev::after { display: none !important; }
+    .marca-texto { background-size: 100% 92%; }
+    #grafico { width: 100% !important; height: auto !important; }
     .sem-quebra { break-inside: avoid; }
     h2, h3 { break-after: avoid; }
     .texto-laudo { font-size: 12pt; line-height: 1.45; }
@@ -101,14 +190,48 @@
 </head>
 <body>
 
-<header class="bg-tinta text-white nao-imprimir">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 pt-6 pb-12">
-    <div class="titulo-largo text-2xl">Explicite</div>
-    <h1 class="titulo-largo text-4xl sm:text-6xl leading-none mt-10 max-w-3xl">Explicite a maturidade digital da sua empresa</h1>
-    <p class="mt-5 text-lg text-[#D2DFDB] max-w-2xl">Responda 8 perguntas sobre nuvem, sistemas, IA e segurança. O laudo com a nota de cada área e o plano de ação sai na hora.</p>
-    <div class="mt-7 flex flex-wrap gap-3">
-      <button type="button" id="btn-demo" class="botao botao-principal">Carregar caso exemplo</button>
-      <a href="#ficha" class="botao botao-contorno">Preencher minha empresa</a>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="tinta-falhada" x="-5%" y="-10%" width="110%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency=".75" numOctaves="2" seed="11" result="ruido"/>
+    <feColorMatrix in="ruido" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -5 0 0 0 4.1" result="falhas"/>
+    <feComposite in="SourceGraphic" in2="falhas" operator="in" result="gasto"/>
+    <feTurbulence type="fractalNoise" baseFrequency=".04" numOctaves="2" seed="3" result="onda"/>
+    <feDisplacementMap in="gasto" in2="onda" scale="2.4"/>
+  </filter>
+</svg>
+
+<header id="abertura" class="abertura nao-imprimir">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <div class="titulo-largo text-2xl pt-6">Explicite</div>
+    <div class="abertura-grade">
+      <div>
+        <h1 class="manchete">
+          <span class="tarjado" style="--d:.15s">Explicite a maturidade</span>
+          <span class="tarjado" style="--d:.32s">digital da sua empresa</span>
+        </h1>
+        <p class="mt-6 text-lg sm:text-xl text-[#D2DFDB] max-w-xl leading-snug">Responda 8 perguntas sobre nuvem, sistemas, IA e segurança. O laudo com a nota de cada área e o plano de ação sai na hora.</p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <button type="button" id="btn-demo" class="botao botao-marca">Carregar caso exemplo</button>
+          <a href="#ficha" class="botao botao-contorno">Preencher minha empresa</a>
+        </div>
+      </div>
+      <div class="vitrine" aria-hidden="true">
+        <div class="vit-folha" id="vit-folha">
+          <p class="vit-topo"><span>Exemplo de laudo</span><span>Empresa fictícia</span></p>
+          <p class="vit-empresa titulo-largo"><span class="tarjado" style="--d:.7s">Distribuidora Sol Nascente</span></p>
+          <div class="vit-nota">
+            <span class="vit-num titulo-largo"><span class="tarjado" style="--d:.9s"><span id="vit-num">38</span>%</span></span>
+            <div class="carimbo vit-carimbo"><strong>Em Transição</strong></div>
+          </div>
+          <div class="mt-3">
+            <div class="vit-linha"><span>Nuvem</span><div class="barra-nota"><i style="width:33%"></i></div><b class="tarjado" style="--d:1.05s">33%</b></div>
+            <div class="vit-linha"><span>Sistemas</span><div class="barra-nota"><i style="width:50%"></i></div><b class="tarjado" style="--d:1.17s">50%</b></div>
+            <div class="vit-linha"><span>IA</span><div class="barra-nota"><i style="width:50%"></i></div><b class="tarjado" style="--d:1.29s">50%</b></div>
+            <div class="vit-linha"><span>Segurança</span><div class="barra-nota"><i style="width:17%"></i></div><b class="tarjado" style="--d:1.41s">17%</b></div>
+          </div>
+          <p class="vit-pista">Primeira ação: <span class="marca-texto" id="vit-marca">parar de colocar dados pessoais em IAs públicas</span></p>
+        </div>
+      </div>
     </div>
   </div>
 </header>
@@ -132,20 +255,22 @@
 
     <div id="perguntas"></div>
 
-    <div class="sticky bottom-0 z-10 -mx-4 sm:mx-0 px-4 py-3 bg-tinta text-white sm:rounded-t flex flex-wrap items-center gap-x-5 gap-y-2" >
-      <div class="grow min-w-[200px]" aria-live="polite">
-        <p id="status-texto" class="font-semibold"></p>
-        <div class="barra-nota mt-1.5 max-w-sm !bg-[#3A5A60]"><i id="status-barra" class="!bg-white" style="width:0"></i></div>
+    <div class="painel">
+      <p id="status-texto" class="font-semibold" aria-live="polite"></p>
+      <nav id="trilha" class="trilha" aria-label="Ir para um pilar"></nav>
+      <div class="flex items-center gap-2 ml-auto">
+        <button type="button" id="btn-limpar" class="botao-texto">Limpar</button>
+        <a href="#secao-laudo" id="btn-ver" class="botao botao-marca">Ver laudo</a>
       </div>
-      <button type="button" id="btn-limpar" class="botao botao-contorno">Limpar respostas</button>
-      <a href="#secao-laudo" id="btn-ver" class="botao botao-principal">Ver laudo</a>
     </div>
   </form>
 
-  <section id="secao-laudo" aria-labelledby="titulo-laudo" class="max-w-4xl mx-auto px-4 sm:px-6 py-12 scroll-mt-2">
-    <div id="laudo-vazio" class="border-2 border-dashed border-[#8FA5A0] rounded px-6 py-14 text-center nao-imprimir">
-      <p class="titulo-largo text-2xl">O laudo aparece aqui</p>
-      <p id="laudo-vazio-texto" class="text-grafite mt-2"></p>
+  <div class="mesa">
+  <section id="secao-laudo" aria-labelledby="titulo-laudo" class="max-w-4xl mx-auto px-4 sm:px-6 py-16 sm:py-20 scroll-mt-2">
+    <div id="laudo-vazio" class="fantasma nao-imprimir">
+      <p class="titulo-largo text-3xl">Cada resposta abre uma parte do laudo</p>
+      <p id="laudo-vazio-texto" class="text-[#D2DFDB] mt-2"></p>
+      <ul id="fantasma-linhas" class="fantasma-linhas"></ul>
     </div>
 
     <article id="laudo" class="folha px-5 sm:px-12 py-9 sm:py-12" hidden>
@@ -154,17 +279,17 @@
         <span>Protocolo <span id="l-protocolo"></span>, emitido em <span id="l-data"></span></span>
       </div>
 
-      <h2 id="titulo-laudo" class="titulo-largo text-3xl sm:text-5xl leading-none mt-7"></h2>
-      <p id="l-identificacao" class="text-grafite mt-2"></p>
+      <h2 id="titulo-laudo" class="rev titulo-largo text-3xl sm:text-5xl leading-none mt-7" style="--d:.35s"></h2>
+      <p id="l-identificacao" class="rev text-grafite mt-2" style="--d:.47s"></p>
 
       <div class="flex flex-wrap items-center gap-x-10 gap-y-6 mt-8">
-        <div>
+        <div class="rev" style="--d:.6s">
           <p class="titulo-largo text-7xl sm:text-8xl leading-none tabular-nums"><span id="l-geral"></span><span class="text-4xl align-top">%</span></p>
           <p class="text-grafite text-sm mt-1">Índice de Maturidade Digital</p>
         </div>
         <div id="l-carimbo" class="carimbo"><strong id="l-estagio"></strong><span>Laudo Explicite</span></div>
       </div>
-      <p id="l-resumo" class="texto-laudo mt-6 max-w-2xl"></p>
+      <p id="l-resumo" class="rev texto-laudo mt-6 max-w-2xl" style="--d:.8s"></p>
       <p id="l-trava" class="mt-4 border-l-4 border-[#B3261E] pl-3 max-w-2xl font-medium" hidden></p>
 
       <div class="grid md:grid-cols-2 gap-8 items-center mt-9 sem-quebra">
@@ -210,13 +335,14 @@
     </article>
 
     <div id="laudo-acoes" class="flex flex-wrap gap-3 mt-6 nao-imprimir" hidden>
-      <button type="button" id="btn-imprimir" class="botao botao-principal">Imprimir / salvar laudo em PDF</button>
+      <button type="button" id="btn-imprimir" class="botao botao-marca">Imprimir / salvar laudo em PDF</button>
       <a href="#ficha" class="botao botao-contorno">Alterar respostas</a>
     </div>
   </section>
+  </div>
 </main>
 
-<footer class="bg-tinta text-[#D2DFDB] nao-imprimir">
+<footer class="bg-[#0C262C] text-[#D2DFDB] nao-imprimir">
   <div class="max-w-6xl mx-auto px-4 sm:px-6 py-8 text-sm">
     <p class="font-bold text-white text-base">Privacy by Design (LGPD): todos os cálculos são processados localmente no seu navegador.</p>
     <p class="mt-1 max-w-3xl">Os dados preenchidos não são enviados nem armazenados em bancos de dados externos, e somem ao fechar a página. Fontes e bibliotecas vêm de CDNs públicas, que não recebem o conteúdo do formulário.</p>
@@ -443,6 +569,8 @@ const ESTAGIOS = [
 
 const PATAMAR = 60;
 
+const ROTULOS = { hospedagem: 'Hospedagem', backup: 'Backup', integracao: 'ERP e CRM', indicadores: 'Indicadores', automacao: 'Automação', usoia: 'Uso de IA', acesso: 'Acessos', lgpd: 'LGPD' };
+
 const DEMO = {
   empresa: 'Distribuidora Sol Nascente (fictícia)', setor: 'varejo', porte: 1, software: 'legado',
   respostas: { hospedagem: 1, backup: 1, integracao: 1, indicadores: 2, automacao: 1, usoia: 2, acesso: 1, lgpd: 0 }
@@ -488,6 +616,36 @@ const esc = s => String(s).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;'
 const TOTAL = PILARES.reduce((s, p) => s + p.perguntas.length, 0);
 let grafico = null;
 let estagioAnterior = null;
+const barrasAnteriores = {};
+const semMovimento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function contar(el, valor, { de = Number(el.dataset.valor || 0), atraso = 0, duracao = 620 } = {}) {
+  cancelAnimationFrame(el._contagem);
+  clearTimeout(el._espera);
+  el.dataset.valor = valor;
+  if (semMovimento || de === valor) { el.textContent = valor; return; }
+  el.textContent = de;
+  el._espera = setTimeout(() => {
+    const inicio = performance.now();
+    const passo = agora => {
+      const t = Math.min((agora - inicio) / duracao, 1);
+      el.textContent = Math.round(de + (valor - de) * (1 - Math.pow(1 - t, 3)));
+      if (t < 1) el._contagem = requestAnimationFrame(passo);
+    };
+    el._contagem = requestAnimationFrame(passo);
+  }, atraso);
+}
+
+const observarMarca = 'IntersectionObserver' in window
+  ? new IntersectionObserver(itens => itens.forEach(i => {
+      if (i.isIntersecting) { i.target.classList.add('marcada'); observarMarca.unobserve(i.target); }
+    }), { threshold: .8 })
+  : null;
+
+function marcar(el) {
+  if (observarMarca && !semMovimento) observarMarca.observe(el);
+  else el.classList.add('marcada');
+}
 
 function montarFormulario() {
   const preencher = (el, pares) => {
@@ -498,10 +656,14 @@ function montarFormulario() {
   preencher($('software'), Object.entries(SOFTWARES));
 
   $('perguntas').innerHTML = PILARES.map(p => `
-    <section class="py-9 border-b border-linha grid lg:grid-cols-[210px_1fr] gap-x-8 gap-y-4" aria-labelledby="pilar-${p.id}">
-      <div>
+    <section class="py-9 border-b border-linha grid lg:grid-cols-[210px_1fr] scroll-mt-4 gap-x-8 gap-y-4" aria-labelledby="pilar-${p.id}">
+      <div class="lg:sticky lg:top-6 self-start">
         <h2 id="pilar-${p.id}" class="titulo-largo text-2xl leading-tight">${esc(p.nome)}</h2>
         <p class="text-grafite mt-1.5 text-[15px]">${esc(p.descricao)}</p>
+        <div class="pilar-nota" id="nota-${p.id}" hidden>
+          <p class="pilar-num titulo-largo"><span data-num></span>%</p>
+          <div class="barra-nota mt-2"><i style="width:0"></i></div>
+        </div>
       </div>
       <div class="grid md:grid-cols-2 gap-x-6 gap-y-6">
         ${p.perguntas.map(q => `
@@ -512,6 +674,10 @@ function montarFormulario() {
           </fieldset>`).join('')}
       </div>
     </section>`).join('');
+
+  $('trilha').innerHTML = PILARES.map(p => `
+    <a href="#pilar-${p.id}" data-pilar="${p.id}"><span>${esc(p.eixo)}</span>${p.perguntas.map(() => '<i></i>').join('')}</a>`).join('');
+  $('fantasma-linhas').innerHTML = PILARES.flatMap(p => p.perguntas.map(q => `<li data-q="${q.id}">${esc(ROTULOS[q.id])}</li>`)).join('');
 }
 
 function lerFicha() {
@@ -552,29 +718,57 @@ function protocolo(f, data) {
   return `EX-${dia}-${h.toString(16).toUpperCase().padStart(4, '0')}`;
 }
 
+function atualizarProgresso(f) {
+  PILARES.forEach(p => {
+    const feitas = p.perguntas.filter(q => f.respostas[q.id] !== undefined);
+    document.querySelectorAll(`#trilha [data-pilar="${p.id}"] i`).forEach((pip, i) => pip.classList.toggle('feita', i < feitas.length));
+    const caixa = $(`nota-${p.id}`);
+    const completo = feitas.length === p.perguntas.length;
+    const estavaOculta = caixa.hidden;
+    caixa.hidden = !completo;
+    const num = caixa.querySelector('[data-num]');
+    const barra = caixa.querySelector('i');
+    if (!completo) { num.dataset.valor = 0; barra.style.width = '0'; return; }
+    const pontos = p.perguntas.reduce((soma, q) => soma + f.respostas[q.id], 0);
+    const nota = Math.round(pontos / (3 * p.perguntas.length) * 100);
+    contar(num, nota, estavaOculta ? { de: 0 } : {});
+    requestAnimationFrame(() => { barra.style.width = `${nota}%`; });
+  });
+  document.querySelectorAll('#fantasma-linhas li').forEach(li => li.classList.toggle('aberta', f.respostas[li.dataset.q] !== undefined));
+}
+
 function atualizar() {
   const f = lerFicha();
   const falta = pendencias(f);
   const respondidas = Object.keys(f.respostas).length;
   const completa = falta.length === 0;
+  const primeira = completa && $('laudo').hidden;
 
-  $('status-barra').style.width = `${respondidas / TOTAL * 100}%`;
-  $('status-texto').textContent = completa ? 'Laudo emitido. Ele acompanha qualquer resposta que você mudar.' : `${respondidas} de ${TOTAL} perguntas respondidas`;
+  atualizarProgresso(f);
   $('btn-ver').hidden = !completa;
-  $('btn-ver').style.display = completa ? '' : 'none';
+  document.querySelector('.painel').classList.toggle('completa', completa);
   $('laudo').hidden = !completa;
   $('laudo-acoes').hidden = !completa;
   $('laudo-vazio').hidden = completa;
 
   if (!completa) {
+    $('status-texto').textContent = `${respondidas} de ${TOTAL} perguntas respondidas`;
     $('laudo-vazio-texto').textContent = `Falta preencher: ${juntar(falta)}.`;
     estagioAnterior = null;
     return;
   }
-  renderizarLaudo(f, calcular(f.respostas));
+  const r = calcular(f.respostas);
+  $('status-texto').textContent = `Laudo emitido: ${r.geral}%, ${r.estagio.nome}`;
+  renderizarLaudo(f, r, primeira);
 }
 
-function renderizarLaudo(f, r) {
+function renderizarLaudo(f, r, primeira) {
+  const folha = $('laudo');
+  if (primeira && !semMovimento) {
+    folha.classList.add('revelando');
+    clearTimeout(folha._fim);
+    folha._fim = setTimeout(() => folha.classList.remove('revelando'), 2200);
+  }
   const ctx = { setor: f.setor, porte: f.porte, software: f.software };
   const agora = new Date();
   const modelo = MODELOS[f.software];
@@ -583,7 +777,7 @@ function renderizarLaudo(f, r) {
   $('l-data').textContent = agora.toLocaleDateString('pt-BR');
   $('titulo-laudo').textContent = f.empresa;
   $('l-identificacao').textContent = `${SETORES[f.setor].nome}, ${PORTES[f.porte].toLowerCase()} colaboradores, software ${SOFTWARES[f.software].toLowerCase()}`;
-  $('l-geral').textContent = r.geral;
+  contar($('l-geral'), r.geral, primeira ? { de: 0, atraso: 650, duracao: 800 } : {});
   $('l-estagio').textContent = r.estagio.nome;
   $('l-resumo').textContent = r.estagio.resumo;
 
@@ -607,10 +801,14 @@ function renderizarLaudo(f, r) {
 
   $('l-tabela').innerHTML = r.pilares.map(p => `
     <tr class="border-t border-linha">
-      <td class="py-2.5 pr-3"><span class="font-semibold">${esc(p.curto)}</span><div class="barra-nota mt-1.5"><i style="width:${p.nota}%"></i></div></td>
+      <td class="py-2.5 pr-3"><span class="font-semibold">${esc(p.curto)}</span><div class="barra-nota mt-1.5"><i data-nota="${p.nota}" style="width:${primeira ? 0 : barrasAnteriores[p.id] ?? p.nota}%"></i></div></td>
       <td class="py-2.5 pr-4 text-right tabular-nums font-bold text-lg">${p.nota}%</td>
       <td class="py-2.5">${prioridadeDoPilar(p.nota)}</td>
     </tr>`).join('');
+  r.pilares.forEach(p => { barrasAnteriores[p.id] = p.nota; });
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    document.querySelectorAll('#l-tabela i').forEach(i => { i.style.width = `${i.dataset.nota}%`; });
+  }));
 
   const notas = r.pilares.map(p => p.nota);
   const maior = Math.max(...notas), menor = Math.min(...notas);
@@ -624,9 +822,12 @@ function renderizarLaudo(f, r) {
     ? pendentes.map((a, i) => `
       <li class="flex gap-3 py-2.5 border-t border-linha">
         <span class="titulo-largo text-2xl leading-none text-carimbo w-5 flex-none">${i + 1}</span>
-        <span class="grow"><span class="font-semibold">${esc(a.q.rec[a.nivel].t)}</span><span class="block text-sm text-grafite">${esc(a.q.pilarCurto)}, ${esc(a.prazo.toLowerCase())}</span></span>
+        <span class="grow"><span class="font-semibold${i === 0 ? ' marca-texto' : ''}">${esc(a.q.rec[a.nivel].t)}</span><span class="block text-sm text-grafite">${esc(a.q.pilarCurto)}, ${esc(a.prazo.toLowerCase())}</span></span>
       </li>`).join('')
     : '<li class="py-2.5 border-t border-linha">Nenhuma pendência. Siga as ações de manutenção de cada pilar.</li>';
+
+  const primeiraAcao = document.querySelector('#l-prioridades .marca-texto');
+  if (primeiraAcao) marcar(primeiraAcao);
 
   $('l-modelo-titulo').textContent = `Modelo de nuvem indicado: ${modelo.sigla}`;
   $('l-modelo').textContent = modelo.texto;
@@ -679,7 +880,7 @@ function desenharGrafico(r) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      animation: { duration: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 300 },
+      animation: { duration: semMovimento ? 0 : 650, easing: 'easeOutQuart' },
       scales: {
         r: {
           min: 0, max: 100,
@@ -728,6 +929,23 @@ $('btn-limpar').addEventListener('click', () => {
 });
 $('btn-imprimir').addEventListener('click', () => window.print());
 atualizar();
+
+/* Abertura: nota de exemplo, marca-texto e inclinação da folha com o ponteiro */
+contar($('vit-num'), 38, { de: 0, atraso: 1050, duracao: 800 });
+setTimeout(() => $('vit-marca').classList.add('marcada'), semMovimento ? 0 : 2500);
+if (!semMovimento && window.matchMedia('(hover: hover)').matches) {
+  const abertura = $('abertura');
+  const folhaExemplo = $('vit-folha');
+  abertura.addEventListener('pointermove', e => {
+    const caixa = abertura.getBoundingClientRect();
+    folhaExemplo.style.setProperty('--ry', `${((e.clientX - caixa.left) / caixa.width - .5) * 9}deg`);
+    folhaExemplo.style.setProperty('--rx', `${((e.clientY - caixa.top) / caixa.height - .5) * -7}deg`);
+  });
+  abertura.addEventListener('pointerleave', () => {
+    folhaExemplo.style.setProperty('--ry', '0deg');
+    folhaExemplo.style.setProperty('--rx', '0deg');
+  });
+}
 </script>
 </body>
 </html>
