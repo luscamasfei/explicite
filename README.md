@@ -1,3 +1,5 @@
+<p align="center"><img src="logo.png" alt="Explicite" width="440"></p>
+
 # 🚀 Explicite — Consultoria em Transformação Digital
 
 🔗 **Acesse o Aplicativo Online (GitHub Pages):** [Clique aqui para abrir o App](https://luscamasfei.github.io/explicite/)
@@ -51,6 +53,11 @@ Pequenas e médias empresas sabem que precisam modernizar a operação, mas não
 ├── style.css            Identidade visual, animações e impressão
 ├── app.js               Perguntas, motor de cálculo, laudo e gráfico
 ├── tailwind.config.js   Cores e fontes do Tailwind
+├── logo.png             Logo original
+├── logo-anel.png        Camada do anel, usada nas animações
+├── logo-e.png           Camada do E, usada nas animações
+├── logo-nome.png        Nome em versão clara, para fundo escuro
+├── favicon.png          Ícone da aba do navegador
 └── README.md
 ```
 
@@ -65,5 +72,5 @@ Pequenas e médias empresas sabem que precisam modernizar a operação, mas não
 ## 🧠 4. Diário de Construção: Como Construímos e Refinamos o App
 
 1. **Concepção e Engenharia de Prompt:** em vez de digitar um prompt, enviamos à IA os dois PDFs da aula (apresentação e guia de requisitos), que incluem o Prompt Mestre. A IA escolheu a Opção B por ser a que o Prompt Mestre descreve e foi além dele em três pontos: a trava de risco, a indicação de SaaS, PaaS ou IaaS pelo tipo de software e as recomendações por setor e porte.
-2. **Ajustes e Refinamentos Técnicos:** durante a construção, pedimos para renomear o aplicativo com o prompt `O nome do aplicativo tem que ser "Explicite"`. Com isso, mudaram o título, o logo, o carimbo do laudo e o prefixo do protocolo. Depois da primeira publicação, pedimos `Deixe o site o mais bonito possível utilizando CSS e JavaScript`. A IA criou um conceito visual ligado ao nome do app: tarjas que se abrem a cada resposta, marca-texto, carimbo com textura de tinta e contagem animada das notas, respeitando quem prefere menos movimento. Por fim, pedimos `Deixe o repositorio mais organizado separando o CSS em outro arquivo e o js em outro arquivo também`, o que tirou CSS e JavaScript do `index.html`. Os testes automatizados em navegador conferiram os cálculos, a trava de risco, a atualização do laudo e a versão para impressão.
+2. **Ajustes e Refinamentos Técnicos:** durante a construção, pedimos para renomear o aplicativo com o prompt `O nome do aplicativo tem que ser "Explicite"`. Com isso, mudaram o título, o logo, o carimbo do laudo e o prefixo do protocolo. Depois da primeira publicação, pedimos `Deixe o site o mais bonito possível utilizando CSS e JavaScript`. A IA criou um conceito visual ligado ao nome do app: tarjas que se abrem a cada resposta, marca-texto, carimbo com textura de tinta e contagem animada das notas, respeitando quem prefere menos movimento. Por fim, pedimos `Deixe o repositorio mais organizado separando o CSS em outro arquivo e o js em outro arquivo também`, o que tirou CSS e JavaScript do `index.html`. Depois, adicionamos a logo oficial, separada em camadas para a animação de entrada, e passamos a usar Conventional Commits. Os testes automatizados em navegador conferiram os cálculos, a trava de risco, a atualização do laudo e a versão para impressão.
 3. **Principal Aprendizado:** _[Preencher com o seu aprendizado pessoal sobre Transformação Digital, Nuvem e IA.]_
