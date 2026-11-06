@@ -40,9 +40,9 @@ Small and medium-sized businesses know they need to modernize, but they don't kn
 | Requirement | Implementation |
 | :--- | :--- |
 | RF01 Identification | Company name, sector, number of employees and main software. |
-| RF02 Data collection by pillar | 8 questions, 2 per pillar. |
+| RF02 Data collection by pillar | 8 questions, 2 per pillar, one per screen, with keyboard shortcuts. |
 | RF03 Scoring engine | Overall score and pillar scores in JavaScript, with no page reload. |
-| RF04 Dashboard | Radar chart (Chart.js) and a table of scores by pillar. |
+| RF04 Dashboard | Dynamic circular gauge (Chart.js), with one quadrant and one score per pillar. |
 | RF05 Report | Best practice plan generated from the answers. |
 | RF06 Demo and export | "Load sample case" and "Print / save report as PDF" buttons (`window.print()`). |
 | RNF01 Static cloud hosting | Runs entirely in the browser from `index.html`, with Tailwind and Chart.js via CDN and no build step. CSS and JavaScript live in their own files (see Repository Structure). |
@@ -71,11 +71,11 @@ Small and medium-sized businesses know they need to modernize, but they don't kn
 | Tool / AI | How it was used in the project |
 | :--- | :--- |
 | **Claude Code (Claude Opus 5.5)** | Reading the class PDFs, defining the questions, weights and business rules, writing the recommendations, generating the HTML/CSS/JS code, running automated tests and drafting this README. |
-| **TailwindCSS & Chart.js (CDN)** | Responsive styling and the dynamic maturity radar chart. |
+| **TailwindCSS & Chart.js (CDN)** | Styling base and the dynamic maturity gauge. |
 | **GitHub & GitHub Pages** | Version control and static cloud hosting (PaaS/CDN). |
 
 ## 🧠 4. Build Log: How We Built and Refined the App
 
 1. **Concept and Prompt Engineering:** instead of typing a prompt, we sent the AI the two class PDFs (the slides and the requirements guide), which include the Master Prompt. The AI chose Option B because it is the one the Master Prompt describes, and went beyond it in three ways: the risk lock, the SaaS, PaaS or IaaS recommendation by type of software, and recommendations by sector and company size.
-2. **Adjustments and Technical Refinements:** during the build, we asked the AI to rename the app to "Explicite", which changed the title, logo, report stamp and protocol prefix. After the first release, we asked it to make the site as beautiful as possible using CSS and JavaScript. The AI created a visual concept tied to the app's name (*explicitar* means to make explicit): redaction bars that open with each answer, highlighter marks, an ink-textured stamp and animated score counters, while respecting users who prefer reduced motion. We then moved the CSS and JavaScript out of `index.html` into their own files, added the official logo, split into layers for the intro animation, and adopted Conventional Commits. Automated browser tests checked the calculations, the risk lock, live report updates and the print version.
+2. **Adjustments and Technical Refinements:** during the build, we asked the AI to rename the app to "Explicite", which changed the title, logo, report stamp and protocol prefix. After the first release, we asked it to make the site as beautiful as possible using CSS and JavaScript. The AI created a visual concept tied to the app's name (*explicitar* means to make explicit): redaction bars, highlighter marks, an ink-textured stamp and animated score counters. We then moved the CSS and JavaScript out of `index.html` into their own files, added the official logo, split into layers for the intro animation, and adopted Conventional Commits. Finally, we asked for a more modern, minimalist look: the form now shows one question at a time and the chart became the logo's ring, with one quadrant per pillar. Automated tests in Chromium, Firefox and WebKit checked the calculations, the risk lock, live report updates and the layout on simulated desktops, phones and tablets.
 3. **Main Takeaway:** _[Fill in with your personal takeaway about Digital Transformation, Cloud and AI.]_

@@ -38,9 +38,9 @@ Pequenas e médias empresas sabem que precisam modernizar a operação, mas não
 | Requisito | Implementação |
 | :--- | :--- |
 | RF01 Identificação | Nome, setor, colaboradores e software principal. |
-| RF02 Coleta por pilares | 8 perguntas, 2 por pilar. |
+| RF02 Coleta por pilares | 8 perguntas, 2 por pilar, uma por tela, com atalhos de teclado. |
 | RF03 Motor de score | Nota geral e sub-notas em JavaScript, sem recarregar a página. |
-| RF04 Dashboard | Gráfico radar (Chart.js) e tabela de notas por pilar. |
+| RF04 Dashboard | Medidor circular dinâmico (Chart.js), com um quadrante e uma nota por pilar. |
 | RF05 Laudo | Plano de boas práticas gerado a partir das respostas. |
 | RF06 Demo e exportação | Botões "Carregar caso exemplo" e "Imprimir / salvar laudo em PDF" (`window.print()`). |
 | RNF01 Nuvem estática | Roda 100% no navegador a partir do `index.html`, com Tailwind e Chart.js por CDN e sem etapa de build. CSS e JavaScript ficam em arquivos próprios (ver Estrutura do Repositório). |
@@ -69,11 +69,11 @@ Pequenas e médias empresas sabem que precisam modernizar a operação, mas não
 | Ferramenta / IA | Como foi utilizada no projeto |
 | :--- | :--- |
 | **Claude Code (Claude Opus 5.5)** | Leitura dos PDFs da aula, definição das perguntas, pesos e regras de negócio, redação das recomendações, geração do código HTML/JS, testes automatizados e rascunho deste README. |
-| **TailwindCSS & Chart.js (CDN)** | Estilização responsiva e gráfico radar dinâmico de maturidade. |
+| **TailwindCSS & Chart.js (CDN)** | Base de estilos e medidor dinâmico de maturidade. |
 | **GitHub & GitHub Pages** | Versionamento de código e publicação em nuvem estática (PaaS/CDN). |
 
 ## 🧠 4. Diário de Construção: Como Construímos e Refinamos o App
 
 1. **Concepção e Engenharia de Prompt:** em vez de digitar um prompt, enviamos à IA os dois PDFs da aula (apresentação e guia de requisitos), que incluem o Prompt Mestre. A IA escolheu a Opção B por ser a que o Prompt Mestre descreve e foi além dele em três pontos: a trava de risco, a indicação de SaaS, PaaS ou IaaS pelo tipo de software e as recomendações por setor e porte.
-2. **Ajustes e Refinamentos Técnicos:** durante a construção, pedimos para renomear o aplicativo com o prompt `O nome do aplicativo tem que ser "Explicite"`. Com isso, mudaram o título, o logo, o carimbo do laudo e o prefixo do protocolo. Depois da primeira publicação, pedimos `Deixe o site o mais bonito possível utilizando CSS e JavaScript`. A IA criou um conceito visual ligado ao nome do app: tarjas que se abrem a cada resposta, marca-texto, carimbo com textura de tinta e contagem animada das notas, respeitando quem prefere menos movimento. Por fim, pedimos `Deixe o repositorio mais organizado separando o CSS em outro arquivo e o js em outro arquivo também`, o que tirou CSS e JavaScript do `index.html`. Depois, adicionamos a logo oficial, separada em camadas para a animação de entrada, e passamos a usar Conventional Commits. Os testes automatizados em navegador conferiram os cálculos, a trava de risco, a atualização do laudo e a versão para impressão.
+2. **Ajustes e Refinamentos Técnicos:** durante a construção, pedimos para renomear o aplicativo com o prompt `O nome do aplicativo tem que ser "Explicite"`. Com isso, mudaram o título, o logo, o carimbo do laudo e o prefixo do protocolo. Depois da primeira publicação, pedimos `Deixe o site o mais bonito possível utilizando CSS e JavaScript`. A IA criou um conceito visual ligado ao nome do app: tarjas que se abrem a cada resposta, marca-texto, carimbo com textura de tinta e contagem animada das notas, respeitando quem prefere menos movimento. Por fim, pedimos `Deixe o repositorio mais organizado separando o CSS em outro arquivo e o js em outro arquivo também`, o que tirou CSS e JavaScript do `index.html`. Depois, adicionamos a logo oficial, separada em camadas para a animação de entrada, e passamos a usar Conventional Commits. Por último, pedimos um visual mais moderno e minimalista: a ficha passou a mostrar uma pergunta por vez e o gráfico virou o anel da logo, com um quadrante por pilar. Os testes automatizados em Chromium, Firefox e WebKit conferiram os cálculos, a trava de risco, a atualização do laudo e o layout em computadores, celulares e tablets simulados.
 3. **Principal Aprendizado:** _[Preencher com o seu aprendizado pessoal sobre Transformação Digital, Nuvem e IA.]_
