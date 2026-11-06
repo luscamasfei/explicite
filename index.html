@@ -8,23 +8,13 @@
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,400..800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@200..600&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com/3.4.16"></script>
 <script src="tailwind.config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <filter id="tinta-falhada" x="-5%" y="-10%" width="110%" height="120%">
-    <feTurbulence type="fractalNoise" baseFrequency=".75" numOctaves="2" seed="11" result="ruido"/>
-    <feColorMatrix in="ruido" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -5 0 0 0 4.1" result="falhas"/>
-    <feComposite in="SourceGraphic" in2="falhas" operator="in" result="gasto"/>
-    <feTurbulence type="fractalNoise" baseFrequency=".04" numOctaves="2" seed="3" result="onda"/>
-    <feDisplacementMap in="gasto" in2="onda" scale="2.4"/>
-  </filter>
-</svg>
 
 <div id="intro" class="nao-imprimir" aria-hidden="true">
   <div class="intro-marca marca" id="intro-marca">
@@ -41,155 +31,138 @@
 </div>
 
 <header id="abertura" class="abertura nao-imprimir">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6">
-    <a href="#abertura" id="marca-cabecalho" class="marca pt-5" aria-label="Explicite">
+  <svg class="anel-fundo" viewBox="0 0 1000 1000" aria-hidden="true">
+    <defs>
+      <linearGradient id="grad-anel" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#39E3FF"/>
+        <stop offset="1" stop-color="#1E6BFF"/>
+      </linearGradient>
+    </defs>
+    <g stroke="url(#grad-anel)" stroke-width="2.5" fill="none">
+      <path d="M528 62 A439 439 0 0 1 938 472"/>
+      <path d="M938 528 A439 439 0 0 1 528 938"/>
+      <path d="M472 938 A439 439 0 0 1 62 528"/>
+      <path d="M62 472 A439 439 0 0 1 472 62"/>
+    </g>
+    <g stroke="#E9F3F5" stroke-width="2.5" stroke-linecap="round">
+      <path d="M500 30V92M500 908V970M30 500H92M908 500H970"/>
+    </g>
+    <circle cx="500" cy="500" r="330" stroke="#8DA6AE" stroke-opacity=".2" stroke-width="1"/>
+  </svg>
+
+  <div class="topo moldura">
+    <a href="#abertura" id="marca-cabecalho" class="marca" aria-label="Explicite">
       <span class="emblema"><img class="anel" src="logo-anel.png" alt=""><img src="logo-e.png" alt=""></span>
       <img class="nome" src="logo-nome.png" alt="">
     </a>
-    <div class="abertura-grade">
-      <div>
-        <h1 class="manchete">
-          <span class="tarjado" style="--d:.15s">Explicite a maturidade</span>
-          <span class="tarjado" style="--d:.32s">digital da sua empresa</span>
-        </h1>
-        <p class="mt-6 text-lg sm:text-xl text-[#D2DFDB] max-w-xl leading-snug">Responda 8 perguntas sobre nuvem, sistemas, IA e segurança. O laudo com a nota de cada área e o plano de ação sai na hora.</p>
-        <div class="mt-8 flex flex-wrap gap-3">
-          <button type="button" id="btn-demo" class="botao botao-marca">Carregar caso exemplo</button>
-          <a href="#ficha" class="botao botao-contorno">Preencher minha empresa</a>
-        </div>
-      </div>
-      <div class="vitrine" aria-hidden="true">
-        <div class="vit-folha" id="vit-folha">
-          <p class="vit-topo"><span>Exemplo de laudo</span><span>Empresa fictícia</span></p>
-          <p class="vit-empresa titulo-largo"><span class="tarjado" style="--d:.7s">Distribuidora Sol Nascente</span></p>
-          <div class="vit-nota">
-            <span class="vit-num titulo-largo"><span class="tarjado" style="--d:.9s"><span id="vit-num">38</span>%</span></span>
-            <div class="carimbo vit-carimbo" style="filter:url(#tinta-falhada)"><strong>Em Transição</strong></div>
-          </div>
-          <div class="mt-3">
-            <div class="vit-linha"><span>Nuvem</span><div class="barra-nota"><i style="width:33%"></i></div><b class="tarjado" style="--d:1.05s">33%</b></div>
-            <div class="vit-linha"><span>Sistemas</span><div class="barra-nota"><i style="width:50%"></i></div><b class="tarjado" style="--d:1.17s">50%</b></div>
-            <div class="vit-linha"><span>IA</span><div class="barra-nota"><i style="width:50%"></i></div><b class="tarjado" style="--d:1.29s">50%</b></div>
-            <div class="vit-linha"><span>Segurança</span><div class="barra-nota"><i style="width:17%"></i></div><b class="tarjado" style="--d:1.41s">17%</b></div>
-          </div>
-          <p class="vit-pista">Primeira ação: <span class="marca-texto" id="vit-marca">parar de colocar dados pessoais em IAs públicas</span></p>
-        </div>
-      </div>
+  </div>
+
+  <div class="abertura-texto moldura">
+    <h1 class="manchete">Explicite a maturidade digital da sua empresa</h1>
+    <p class="subtitulo">8 perguntas sobre nuvem, sistemas, IA e segurança. Um laudo com nota, prioridades e plano de ação.</p>
+    <div class="acoes">
+      <button type="button" id="btn-comecar" class="botao botao-claro">Começar diagnóstico</button>
+      <button type="button" id="btn-demo" class="botao-texto">Carregar caso exemplo</button>
     </div>
   </div>
 </header>
 
 <main>
-  <form id="ficha" class="max-w-6xl mx-auto px-4 sm:px-6 nao-imprimir" novalidate autocomplete="off">
-    <section aria-labelledby="titulo-id" class="py-10 border-b border-linha">
-      <h2 id="titulo-id" class="titulo-largo text-3xl">Sobre a empresa</h2>
-      <p class="text-grafite mt-1">Setor, porte e tipo de software ajustam as recomendações do laudo.</p>
-      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-5">
-        <label class="block"><span class="block font-semibold mb-1.5">Nome da empresa</span>
-          <input id="empresa" class="campo" type="text" maxlength="80" placeholder="Ex.: Padaria Central"></label>
-        <label class="block"><span class="block font-semibold mb-1.5">Setor</span>
-          <select id="setor" class="campo"></select></label>
-        <label class="block"><span class="block font-semibold mb-1.5">Colaboradores</span>
-          <select id="porte" class="campo"></select></label>
-        <label class="block"><span class="block font-semibold mb-1.5">Software principal</span>
-          <select id="software" class="campo"></select></label>
-      </div>
-    </section>
+  <form id="ficha" class="ficha moldura nao-imprimir" novalidate autocomplete="off">
+    <nav id="trilha" class="trilha" aria-label="Perguntas"></nav>
 
-    <div id="perguntas"></div>
+    <div class="palco">
+      <section class="passo" data-passo="0">
+        <h2 class="pergunta" tabindex="-1"><span class="rotulo-pilar">Antes de começar</span>Sobre a empresa</h2>
+        <div class="campos">
+          <label><span class="campo-rotulo">Nome da empresa</span>
+            <input id="empresa" class="campo" type="text" maxlength="80" placeholder="Ex.: Padaria Central"></label>
+          <label><span class="campo-rotulo">Setor</span>
+            <select id="setor" class="campo"></select></label>
+          <label><span class="campo-rotulo">Colaboradores</span>
+            <select id="porte" class="campo"></select></label>
+          <label><span class="campo-rotulo">Software principal</span>
+            <select id="software" class="campo"></select></label>
+        </div>
+      </section>
+      <div id="perguntas"></div>
+    </div>
 
-    <div class="painel">
-      <p id="status-texto" class="font-semibold" aria-live="polite"></p>
-      <nav id="trilha" class="trilha" aria-label="Ir para um pilar"></nav>
-      <div class="flex items-center gap-2 ml-auto">
-        <button type="button" id="btn-limpar" class="botao-texto">Limpar</button>
-        <a href="#secao-laudo" id="btn-ver" class="botao botao-marca">Ver laudo</a>
-      </div>
+    <div class="navegacao">
+      <button type="button" id="btn-voltar" class="botao-texto">Voltar</button>
+      <p id="dica" class="dica" aria-live="polite"></p>
+      <button type="button" id="btn-avancar" class="botao botao-claro"></button>
     </div>
   </form>
 
-  <div class="mesa">
-  <section id="secao-laudo" aria-labelledby="titulo-laudo" class="max-w-4xl mx-auto px-4 sm:px-6 py-16 sm:py-20 scroll-mt-2">
-    <div id="laudo-vazio" class="fantasma nao-imprimir">
-      <p class="titulo-largo text-3xl">Cada resposta abre uma parte do laudo</p>
-      <p id="laudo-vazio-texto" class="text-[#D2DFDB] mt-2"></p>
-      <ul id="fantasma-linhas" class="fantasma-linhas"></ul>
+  <article id="laudo" class="laudo moldura" aria-labelledby="titulo-laudo" hidden>
+    <div class="laudo-topo surge">
+      <span class="marca" aria-label="Explicite">
+        <span class="emblema"><img class="anel" src="logo-anel.png" alt=""><img src="logo-e.png" alt=""></span>
+        <img class="nome" src="logo-nome.png" alt="">
+      </span>
+      <img class="logo-impressao" src="logo.png" alt="Explicite">
+      <span>Protocolo <span id="l-protocolo"></span>, emitido em <span id="l-data"></span></span>
     </div>
 
-    <article id="laudo" class="folha px-5 sm:px-12 py-9 sm:py-12" hidden>
-      <div class="flex flex-wrap items-center justify-between gap-x-6 gap-y-1 border-b-2 border-tinta pb-3 text-sm">
-        <span class="flex flex-wrap items-center gap-x-3 font-bold"><img src="logo.png" alt="Explicite" class="h-11 w-auto -my-2 -ml-2"><span class="sr-only">Explicite: </span>Diagnóstico 360º de maturidade digital</span>
-        <span>Protocolo <span id="l-protocolo"></span>, emitido em <span id="l-data"></span></span>
+    <div class="resultado">
+      <div class="surge" style="--d:.1s">
+        <h2 id="titulo-laudo" class="empresa"></h2>
+        <p id="l-identificacao" class="identificacao"></p>
+        <p class="selo"><i></i><span id="l-estagio"></span></p>
+        <p id="l-resumo" class="resumo"></p>
+        <p id="l-trava" class="alerta" hidden></p>
       </div>
-
-      <h2 id="titulo-laudo" class="rev titulo-largo text-3xl sm:text-5xl leading-none mt-7" style="--d:.35s"></h2>
-      <p id="l-identificacao" class="rev text-grafite mt-2" style="--d:.47s"></p>
-
-      <div class="flex flex-wrap items-center gap-x-10 gap-y-6 mt-8">
-        <div class="rev" style="--d:.6s">
-          <p class="titulo-largo text-7xl sm:text-8xl leading-none tabular-nums"><span id="l-geral"></span><span class="text-4xl align-top">%</span></p>
-          <p class="text-grafite text-sm mt-1">Índice de Maturidade Digital</p>
+      <div class="medidor surge" style="--d:.2s">
+        <p class="quadrante"><b id="q-infra"></b>Nuvem</p>
+        <p class="quadrante"><b id="q-sistemas"></b>Sistemas</p>
+        <p class="quadrante"><b id="q-ia"></b>IA</p>
+        <p class="quadrante"><b id="q-gov"></b>Segurança</p>
+        <canvas id="grafico" role="img" aria-label="Medidor circular com a nota de cada pilar. Os valores aparecem nos cantos do medidor."></canvas>
+        <i class="medidor-marca n"></i><i class="medidor-marca l"></i><i class="medidor-marca s"></i><i class="medidor-marca o"></i>
+        <div class="medidor-nota">
+          <p class="medidor-num"><span id="l-geral"></span><small>%</small></p>
+          <p class="medidor-rotulo">Maturidade digital</p>
         </div>
-        <div id="l-carimbo" class="carimbo" style="filter:url(#tinta-falhada)"><strong id="l-estagio"></strong><span>Laudo Explicite</span></div>
       </div>
-      <p id="l-resumo" class="rev texto-laudo mt-6 max-w-2xl" style="--d:.8s"></p>
-      <p id="l-trava" class="mt-4 border-l-4 border-[#B3261E] pl-3 max-w-2xl font-medium" hidden></p>
-
-      <div class="grid md:grid-cols-2 gap-8 items-center mt-9 sem-quebra">
-        <div class="min-w-0">
-          <div class="relative h-[320px] w-full overflow-hidden">
-            <canvas id="grafico" role="img" aria-label="Gráfico radar com a nota da empresa em cada pilar, comparada ao patamar de 60%. Os valores estão na tabela ao lado."></canvas>
-          </div>
-          <p id="grafico-falhou" class="text-sm text-grafite" hidden>O gráfico não carregou porque a biblioteca Chart.js está indisponível. As notas estão na tabela.</p>
-          <div id="grafico-legenda" class="flex flex-wrap justify-center gap-x-5 gap-y-1 mt-2 text-sm text-grafite">
-            <span class="inline-flex items-center gap-1.5"><svg width="20" height="8" aria-hidden="true"><line x1="0" y1="4" x2="20" y2="4" stroke="#2742C8" stroke-width="2.5"/></svg>Sua empresa</span>
-            <span class="inline-flex items-center gap-1.5"><svg width="20" height="8" aria-hidden="true"><line x1="0" y1="4" x2="20" y2="4" stroke="#6F8488" stroke-width="2" stroke-dasharray="4 3"/></svg>Patamar Conectada (60%)</span>
-          </div>
-        </div>
-        <table class="w-full text-left">
-          <caption class="sr-only">Nota e prioridade de cada pilar</caption>
-          <thead class="text-sm text-grafite"><tr><th class="font-medium pb-2 w-full">Pilar</th><th class="font-medium pb-2 text-right pr-4">Nota</th><th class="font-medium pb-2">Prioridade</th></tr></thead>
-          <tbody id="l-tabela"></tbody>
-        </table>
-      </div>
-      <p id="l-destaque" class="texto-laudo mt-6"></p>
-
-      <section class="mt-10 sem-quebra">
-        <h3 class="titulo-largo text-2xl">Por onde começar</h3>
-        <ol id="l-prioridades" class="mt-3"></ol>
-      </section>
-
-      <section class="mt-10 sem-quebra bg-[#EEF3F0] px-5 py-4 rounded-sm">
-        <h3 id="l-modelo-titulo" class="titulo-largo text-2xl"></h3>
-        <p id="l-modelo" class="texto-laudo mt-1"></p>
-      </section>
-
-      <section class="mt-10">
-        <h3 class="titulo-largo text-3xl">Plano de boas práticas do especialista</h3>
-        <div id="l-plano"></div>
-      </section>
-
-      <section class="mt-10 border-t border-linha pt-5 text-sm text-grafite sem-quebra">
-        <h3 class="font-bold text-tinta">Como a nota é calculada</h3>
-        <p class="mt-1 max-w-2xl">Cada resposta vale de 0 a 3 pontos. A nota do pilar é a soma das duas perguntas dividida por 6. O índice geral é a soma das 8 perguntas dividida por 24. Estágios: Iniciante até 34%, Em Transição de 35% a 59%, Conectada de 60% a 84%, Líder Digital a partir de 85%. Não ter backup, ter senhas compartilhadas ou expor dados pessoais em IA pública limita o estágio a Em Transição, seja qual for a nota.</p>
-        <p class="mt-2 max-w-2xl">Este laudo é orientativo e foi gerado por regras automáticas. Um especialista deve revisá-lo antes da execução, e ele não substitui auditoria técnica nem assessoria jurídica.</p>
-        <p class="mt-5 text-tinta">Especialista responsável: <strong>Lucas Maffei</strong></p>
-      </section>
-    </article>
-
-    <div id="laudo-acoes" class="flex flex-wrap gap-3 mt-6 nao-imprimir" hidden>
-      <button type="button" id="btn-imprimir" class="botao botao-marca">Imprimir / salvar laudo em PDF</button>
-      <a href="#ficha" class="botao botao-contorno">Alterar respostas</a>
     </div>
-  </section>
-  </div>
+    <p id="grafico-falhou" class="destaque" hidden>O medidor não carregou porque a biblioteca Chart.js está indisponível. As notas seguem acima.</p>
+    <p id="l-destaque" class="destaque"></p>
+
+    <section class="bloco">
+      <h3 class="bloco-titulo">Por onde começar</h3>
+      <ol id="l-prioridades" class="prioridades"></ol>
+    </section>
+
+    <section class="bloco">
+      <h3 id="l-modelo-titulo" class="bloco-titulo"></h3>
+      <p id="l-modelo" class="modelo"></p>
+    </section>
+
+    <section class="bloco">
+      <h3 class="bloco-titulo">Plano de boas práticas do especialista</h3>
+      <div id="l-plano"></div>
+    </section>
+
+    <section class="metodo">
+      <p><strong>Como a nota é calculada.</strong> Cada resposta vale de 0 a 3 pontos. A nota do pilar é a soma das duas perguntas dividida por 6. O índice geral é a soma das 8 perguntas dividida por 24. Estágios: Iniciante até 34%, Em Transição de 35% a 59%, Conectada de 60% a 84%, Líder Digital a partir de 85%. Não ter backup, ter senhas compartilhadas ou expor dados pessoais em IA pública limita o estágio a Em Transição, seja qual for a nota.</p>
+      <p>Este laudo é orientativo e foi gerado por regras automáticas. Um especialista deve revisá-lo antes da execução, e ele não substitui auditoria técnica nem assessoria jurídica.</p>
+      <p>Especialista responsável: <strong>Lucas Maffei</strong></p>
+    </section>
+
+    <div class="acoes nao-imprimir">
+      <button type="button" id="btn-imprimir" class="botao botao-claro">Imprimir / salvar laudo em PDF</button>
+      <button type="button" id="btn-alterar" class="botao-texto">Alterar respostas</button>
+      <button type="button" id="btn-limpar" class="botao-texto">Recomeçar</button>
+    </div>
+  </article>
 </main>
 
-<footer class="bg-[#0C262C] text-[#D2DFDB] nao-imprimir">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-8 text-sm">
-    <p class="font-bold text-white text-base">Privacy by Design (LGPD): todos os cálculos são processados localmente no seu navegador.</p>
-    <p class="mt-1 max-w-3xl">Os dados preenchidos não são enviados nem armazenados em bancos de dados externos, e somem ao fechar a página. Fontes e bibliotecas vêm de CDNs públicas, que não recebem o conteúdo do formulário.</p>
-    <p class="mt-4">Criado por Lucas Maffei para a unidade curricular Exploração Digital e Fundamentos Tecnológicos.</p>
+<footer class="rodape nao-imprimir">
+  <div class="moldura">
+    <p><strong>Privacy by Design (LGPD): todos os cálculos são processados localmente no seu navegador.</strong></p>
+    <p>Os dados preenchidos não são enviados nem armazenados em bancos de dados externos, e somem ao fechar a página. Fontes e bibliotecas vêm de CDNs públicas, que não recebem o conteúdo do formulário.</p>
+    <p>Criado por Lucas Maffei para a unidade curricular Exploração Digital e Fundamentos Tecnológicos.</p>
   </div>
 </footer>
 

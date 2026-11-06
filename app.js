@@ -216,7 +216,6 @@ const ESTAGIOS = [
 
 const PATAMAR = 60;
 
-const ROTULOS = { hospedagem: 'Hospedagem', backup: 'Backup', integracao: 'ERP e CRM', indicadores: 'Indicadores', automacao: 'Automação', usoia: 'Uso de IA', acesso: 'Acessos', lgpd: 'LGPD' };
 
 const DEMO = {
   empresa: 'Distribuidora Sol Nascente (fictícia)', setor: 'varejo', porte: 1, software: 'legado',
@@ -260,11 +259,13 @@ function prioridadeDoPilar(nota) {
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
-const TOTAL = PILARES.reduce((s, p) => s + p.perguntas.length, 0);
-let grafico = null;
-let estagioAnterior = null;
-const barrasAnteriores = {};
+const PERGUNTAS = PILARES.flatMap(p => p.perguntas.map(q => ({ ...q, pilarNome: p.nome })));
+const TOTAL = PERGUNTAS.length;
+const CORES_PILAR = ['#39E3FF', '#2FB5FF', '#2592FF', '#1E6BFF'];
+const VAO = 7;
 const semMovimento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let passo = 0;
+let grafico = null;
 
 function contar(el, valor, { de = Number(el.dataset.valor || 0), atraso = 0, duracao = 620 } = {}) {
   cancelAnimationFrame(el._contagem);
@@ -274,24 +275,13 @@ function contar(el, valor, { de = Number(el.dataset.valor || 0), atraso = 0, dur
   el.textContent = de;
   el._espera = setTimeout(() => {
     const inicio = performance.now();
-    const passo = agora => {
+    const quadro = agora => {
       const t = Math.min((agora - inicio) / duracao, 1);
       el.textContent = Math.round(de + (valor - de) * (1 - Math.pow(1 - t, 3)));
-      if (t < 1) el._contagem = requestAnimationFrame(passo);
+      if (t < 1) el._contagem = requestAnimationFrame(quadro);
     };
-    el._contagem = requestAnimationFrame(passo);
+    el._contagem = requestAnimationFrame(quadro);
   }, atraso);
-}
-
-const observarMarca = 'IntersectionObserver' in window
-  ? new IntersectionObserver(itens => itens.forEach(i => {
-      if (i.isIntersecting) { i.target.classList.add('marcada'); observarMarca.unobserve(i.target); }
-    }), { threshold: .8 })
-  : null;
-
-function marcar(el) {
-  if (observarMarca && !semMovimento) observarMarca.observe(el);
-  else el.classList.add('marcada');
 }
 
 function montarFormulario() {
@@ -302,37 +292,24 @@ function montarFormulario() {
   preencher($('porte'), PORTES.map((t, i) => [i, t]));
   preencher($('software'), Object.entries(SOFTWARES));
 
-  $('perguntas').innerHTML = PILARES.map(p => `
-    <section class="py-9 border-b border-linha grid lg:grid-cols-[210px_1fr] scroll-mt-4 gap-x-8 gap-y-4" aria-labelledby="pilar-${p.id}">
-      <div class="lg:sticky lg:top-6 self-start">
-        <h2 id="pilar-${p.id}" class="titulo-largo text-2xl leading-tight">${esc(p.nome)}</h2>
-        <p class="text-grafite mt-1.5 text-[15px]">${esc(p.descricao)}</p>
-        <div class="pilar-nota" id="nota-${p.id}" hidden>
-          <p class="pilar-num titulo-largo"><span data-num></span>%</p>
-          <div class="barra-nota mt-2"><i style="width:0"></i></div>
-        </div>
+  $('perguntas').innerHTML = PERGUNTAS.map((q, i) => `
+    <fieldset class="passo" data-passo="${i + 1}" hidden>
+      <legend class="pergunta" tabindex="-1"><span class="rotulo-pilar">${esc(q.pilarNome)}</span>${esc(q.texto)}</legend>
+      <div class="opcoes">
+        ${q.opcoes.map((o, n) => `
+          <label class="opcao"><input type="radio" name="${q.id}" value="${n}"><span>${esc(o)}</span><span class="tecla" aria-hidden="true">${n + 1}</span></label>`).join('')}
       </div>
-      <div class="grid md:grid-cols-2 gap-x-6 gap-y-6">
-        ${p.perguntas.map(q => `
-          <fieldset>
-            <legend class="font-semibold mb-2 text-[17px] leading-snug">${esc(q.texto)}</legend>
-            ${q.opcoes.map((o, i) => `
-              <label class="opcao"><input type="radio" name="${q.id}" value="${i}"><span>${esc(o)}</span></label>`).join('')}
-          </fieldset>`).join('')}
-      </div>
-    </section>`).join('');
+    </fieldset>`).join('');
 
-  $('trilha').innerHTML = PILARES.map(p => `
-    <a href="#pilar-${p.id}" data-pilar="${p.id}"><span>${esc(p.eixo)}</span>${p.perguntas.map(() => '<i></i>').join('')}</a>`).join('');
-  $('fantasma-linhas').innerHTML = PILARES.flatMap(p => p.perguntas.map(q => `<li data-q="${q.id}">${esc(ROTULOS[q.id])}</li>`)).join('');
+  $('trilha').innerHTML = PERGUNTAS.map((q, i) => `<button type="button" data-ir="${i + 1}" aria-label="Pergunta ${i + 1} de ${TOTAL}"></button>`).join('');
 }
 
 function lerFicha() {
   const respostas = {};
-  PILARES.forEach(p => p.perguntas.forEach(q => {
+  PERGUNTAS.forEach(q => {
     const marcada = document.querySelector(`input[name="${q.id}"]:checked`);
     if (marcada) respostas[q.id] = Number(marcada.value);
-  }));
+  });
   return {
     empresa: $('empresa').value.trim(),
     setor: $('setor').value,
@@ -342,14 +319,12 @@ function lerFicha() {
   };
 }
 
-function pendencias(f) {
+function pendenciasCadastro(f) {
   const lista = [];
   if (!f.empresa) lista.push('nome da empresa');
   if (!f.setor) lista.push('setor');
   if (f.porte === null) lista.push('colaboradores');
   if (!f.software) lista.push('software principal');
-  const faltam = TOTAL - Object.keys(f.respostas).length;
-  if (faltam) lista.push(faltam === 1 ? '1 pergunta' : `${faltam} perguntas`);
   return lista;
 }
 
@@ -365,56 +340,74 @@ function protocolo(f, data) {
   return `EX-${dia}-${h.toString(16).toUpperCase().padStart(4, '0')}`;
 }
 
-function atualizarProgresso(f) {
-  PILARES.forEach(p => {
-    const feitas = p.perguntas.filter(q => f.respostas[q.id] !== undefined);
-    document.querySelectorAll(`#trilha [data-pilar="${p.id}"] i`).forEach((pip, i) => pip.classList.toggle('feita', i < feitas.length));
-    const caixa = $(`nota-${p.id}`);
-    const completo = feitas.length === p.perguntas.length;
-    const estavaOculta = caixa.hidden;
-    caixa.hidden = !completo;
-    const num = caixa.querySelector('[data-num]');
-    const barra = caixa.querySelector('i');
-    if (!completo) { num.dataset.valor = 0; barra.style.width = '0'; return; }
-    const pontos = p.perguntas.reduce((soma, q) => soma + f.respostas[q.id], 0);
-    const nota = Math.round(pontos / (3 * p.perguntas.length) * 100);
-    contar(num, nota, estavaOculta ? { de: 0 } : {});
-    requestAnimationFrame(() => { barra.style.width = `${nota}%`; });
+/* Navegação entre as perguntas */
+
+function irPara(destino, { focar = true } = {}) {
+  const direcao = destino >= passo ? 1 : -1;
+  passo = destino;
+  document.querySelectorAll('.passo').forEach(el => {
+    const ativo = Number(el.dataset.passo) === passo;
+    el.hidden = !ativo;
+    el.classList.remove('entrando');
+    if (ativo) {
+      el.style.setProperty('--dir', direcao);
+      void el.offsetWidth;
+      el.classList.add('entrando');
+      if (focar) el.querySelector('.pergunta').focus({ preventScroll: true });
+    }
   });
-  document.querySelectorAll('#fantasma-linhas li').forEach(li => li.classList.toggle('aberta', f.respostas[li.dataset.q] !== undefined));
+  atualizar();
+}
+
+function avancar() {
+  if (passo < TOTAL) { irPara(passo + 1); return; }
+  const f = lerFicha();
+  if (pendenciasCadastro(f).length) { irPara(0); return; }
+  const faltando = PERGUNTAS.findIndex(q => f.respostas[q.id] === undefined);
+  if (faltando >= 0) { irPara(faltando + 1); return; }
+  $('ficha').hidden = true;
+  $('laudo').scrollIntoView();
+}
+
+function abrirFicha(destino) {
+  $('ficha').hidden = false;
+  irPara(destino, { focar: false });
+  $('ficha').scrollIntoView();
+}
+
+function atualizarNavegacao(f) {
+  const cadastroOk = pendenciasCadastro(f).length === 0;
+  const respondida = passo > 0 && f.respostas[PERGUNTAS[passo - 1].id] !== undefined;
+  $('btn-voltar').hidden = passo === 0;
+  $('btn-avancar').disabled = passo === 0 ? !cadastroOk : !respondida;
+  $('btn-avancar').textContent = passo === 0 ? 'Começar' : passo === TOTAL ? 'Ver laudo' : 'Próxima';
+  $('dica').textContent = passo === 0
+    ? (cadastroOk ? '' : `Falta preencher: ${juntar(pendenciasCadastro(f))}.`)
+    : `${passo} de ${TOTAL}`;
+  document.querySelectorAll('#trilha button').forEach((b, i) => {
+    b.classList.toggle('feita', f.respostas[PERGUNTAS[i].id] !== undefined);
+    b.classList.toggle('atual', i + 1 === passo);
+    b.disabled = !cadastroOk;
+  });
 }
 
 function atualizar() {
   const f = lerFicha();
-  const falta = pendencias(f);
-  const respondidas = Object.keys(f.respostas).length;
-  const completa = falta.length === 0;
+  atualizarNavegacao(f);
+  const completa = pendenciasCadastro(f).length === 0 && Object.keys(f.respostas).length === TOTAL;
   const primeira = completa && $('laudo').hidden;
-
-  atualizarProgresso(f);
-  $('btn-ver').hidden = !completa;
-  document.querySelector('.painel').classList.toggle('completa', completa);
   $('laudo').hidden = !completa;
-  $('laudo-acoes').hidden = !completa;
-  $('laudo-vazio').hidden = completa;
-
-  if (!completa) {
-    $('status-texto').textContent = `${respondidas} de ${TOTAL} perguntas respondidas`;
-    $('laudo-vazio-texto').textContent = `Falta preencher: ${juntar(falta)}.`;
-    estagioAnterior = null;
-    return;
-  }
-  const r = calcular(f.respostas);
-  $('status-texto').textContent = `Laudo emitido: ${r.geral}%, ${r.estagio.nome}`;
-  renderizarLaudo(f, r, primeira);
+  if (completa) renderizarLaudo(f, calcular(f.respostas), primeira);
 }
+
+/* Laudo */
 
 function renderizarLaudo(f, r, primeira) {
   const folha = $('laudo');
   if (primeira && !semMovimento) {
     folha.classList.add('revelando');
     clearTimeout(folha._fim);
-    folha._fim = setTimeout(() => folha.classList.remove('revelando'), 2200);
+    folha._fim = setTimeout(() => folha.classList.remove('revelando'), 1400);
   }
   const ctx = { setor: f.setor, porte: f.porte, software: f.software };
   const agora = new Date();
@@ -424,18 +417,10 @@ function renderizarLaudo(f, r, primeira) {
   $('l-data').textContent = agora.toLocaleDateString('pt-BR');
   $('titulo-laudo').textContent = f.empresa;
   $('l-identificacao').textContent = `${SETORES[f.setor].nome}, ${PORTES[f.porte].toLowerCase()} colaboradores, software ${SOFTWARES[f.software].toLowerCase()}`;
-  contar($('l-geral'), r.geral, primeira ? { de: 0, atraso: 650, duracao: 800 } : {});
+  contar($('l-geral'), r.geral, primeira ? { de: 0, atraso: 200, duracao: 1100 } : {});
   $('l-estagio').textContent = r.estagio.nome;
   $('l-resumo').textContent = r.estagio.resumo;
-
-  const carimbo = $('l-carimbo');
-  carimbo.style.setProperty('--tinta-carimbo', r.estagio.cor);
-  if (estagioAnterior !== r.estagio.nome) {
-    carimbo.classList.remove('batendo');
-    void carimbo.offsetWidth;
-    carimbo.classList.add('batendo');
-    estagioAnterior = r.estagio.nome;
-  }
+  r.pilares.forEach(p => { $(`q-${p.id}`).textContent = `${p.nota}%`; });
 
   const trava = $('l-trava');
   trava.hidden = r.riscos.length === 0;
@@ -445,17 +430,6 @@ function renderizarLaudo(f, r, primeira) {
       ? `Pela nota, a empresa seria classificada acima de Em Transição, mas ${r.riscos.length > 1 ? 'esses riscos limitam' : 'esse risco limita'} o estágio até a correção.`
       : `Resolva ${r.riscos.length > 1 ? 'esses pontos' : 'esse ponto'} antes de qualquer outro investimento.`);
   }
-
-  $('l-tabela').innerHTML = r.pilares.map(p => `
-    <tr class="border-t border-linha">
-      <td class="py-2.5 pr-3"><span class="font-semibold">${esc(p.curto)}</span><div class="barra-nota mt-1.5"><i data-nota="${p.nota}" style="width:${primeira ? 0 : barrasAnteriores[p.id] ?? p.nota}%"></i></div></td>
-      <td class="py-2.5 pr-4 text-right tabular-nums font-bold text-lg">${p.nota}%</td>
-      <td class="py-2.5">${prioridadeDoPilar(p.nota)}</td>
-    </tr>`).join('');
-  r.pilares.forEach(p => { barrasAnteriores[p.id] = p.nota; });
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    document.querySelectorAll('#l-tabela i').forEach(i => { i.style.width = `${i.dataset.nota}%`; });
-  }));
 
   const notas = r.pilares.map(p => p.nota);
   const maior = Math.max(...notas), menor = Math.min(...notas);
@@ -467,83 +441,88 @@ function renderizarLaudo(f, r, primeira) {
   const pendentes = r.acoes.filter(a => a.nivel < 3).slice(0, 3);
   $('l-prioridades').innerHTML = pendentes.length
     ? pendentes.map((a, i) => `
-      <li class="flex gap-3 py-2.5 border-t border-linha">
-        <span class="titulo-largo text-2xl leading-none text-carimbo w-5 flex-none">${i + 1}</span>
-        <span class="grow"><span class="font-semibold${i === 0 ? ' marca-texto' : ''}">${esc(a.q.rec[a.nivel].t)}</span><span class="block text-sm text-grafite">${esc(a.q.pilarCurto)}, ${esc(a.prazo.toLowerCase())}</span></span>
+      <li>
+        <span class="prioridade-num">${i + 1}</span>
+        <span class="prioridade-titulo">${esc(a.q.rec[a.nivel].t)}</span>
+        <span class="prioridade-meta">${esc(a.q.pilarCurto)}, ${esc(a.prazo.toLowerCase())}</span>
       </li>`).join('')
-    : '<li class="py-2.5 border-t border-linha">Nenhuma pendência. Siga as ações de manutenção de cada pilar.</li>';
-
-  const primeiraAcao = document.querySelector('#l-prioridades .marca-texto');
-  if (primeiraAcao) marcar(primeiraAcao);
+    : '<li><span class="prioridade-titulo">Nenhuma pendência. Siga as ações de manutenção de cada pilar.</span></li>';
 
   $('l-modelo-titulo').textContent = `Modelo de nuvem indicado: ${modelo.sigla}`;
   $('l-modelo').textContent = modelo.texto;
 
   $('l-plano').innerHTML = PILARES.map(p => {
     const nota = r.pilares.find(x => x.id === p.id).nota;
-    const nota_setor = SETORES[f.setor].notas[p.id];
+    const notaSetor = SETORES[f.setor].notas[p.id];
     const itens = r.acoes.filter(a => a.q.pilar === p.id);
     return `
-      <div class="mt-7">
-        <h4 class="titulo-largo text-xl flex justify-between gap-4 border-b border-tinta pb-1 sem-quebra"><span>${esc(p.nome)}</span><span class="tabular-nums">${nota}%</span></h4>
-        ${nota_setor ? `<p class="texto-laudo mt-3 italic">${esc(nota_setor)}</p>` : ''}
-        ${itens.map(a => {
-          const rec = a.q.rec[a.nivel];
-          return `<div class="mt-4 sem-quebra">
-            <p class="font-semibold text-[17px] leading-snug">${esc(rec.t)} <span class="font-normal text-sm text-grafite whitespace-nowrap">(${esc(a.prazo.toLowerCase())})</span></p>
-            <p class="texto-laudo mt-0.5">${esc(rec.d(ctx))}</p>
-          </div>`;
-        }).join('')}
+      <div class="pilar">
+        <div>
+          <h4 class="pilar-nome">${esc(p.nome)}</h4>
+          <p class="pilar-nota">${nota}%</p>
+          <p class="pilar-prioridade">Prioridade: ${prioridadeDoPilar(nota).toLowerCase()}</p>
+        </div>
+        <div>
+          ${notaSetor ? `<p class="pilar-setor">${esc(notaSetor)}</p>` : ''}
+          ${itens.map(a => {
+            const rec = a.q.rec[a.nivel];
+            return `<div class="acao">
+              <p class="acao-titulo">${esc(rec.t)}<span class="acao-prazo">${esc(a.prazo)}</span></p>
+              <p class="acao-texto">${esc(rec.d(ctx))}</p>
+            </div>`;
+          }).join('')}
+        </div>
       </div>`;
   }).join('');
 
-  desenharGrafico(r);
+  desenharMedidor(r);
 }
 
-function desenharGrafico(r) {
+/* O gráfico é o anel da logo: um quadrante por pilar */
+function dadosDoMedidor(r) {
+  return r.pilares.flatMap(p => [p.nota, 100 - p.nota, VAO]);
+}
+
+function desenharMedidor(r) {
   if (typeof Chart === 'undefined') {
-    $('grafico').parentElement.hidden = true;
-    $('grafico-legenda').hidden = true;
+    $('grafico').hidden = true;
     $('grafico-falhou').hidden = false;
     return;
   }
-  const notas = r.pilares.map(p => p.nota);
-  const rotulos = r.pilares.map(p => [p.eixo, `${p.nota}%`]);
+  const dados = dadosDoMedidor(r);
   if (grafico) {
-    grafico.data.labels = rotulos;
-    grafico.data.datasets[0].data = notas;
+    grafico.data.datasets[0].data = dados;
     grafico.update();
     return;
   }
+  const trilho = 'rgba(141, 166, 174, .2)';
   grafico = new Chart($('grafico'), {
-    type: 'radar',
+    type: 'doughnut',
     data: {
-      labels: rotulos,
-      datasets: [
-        { label: 'Sua empresa', data: notas, borderColor: '#2742C8', backgroundColor: 'rgba(39,66,200,.14)', borderWidth: 2.5, pointRadius: 4, pointHoverRadius: 7, pointHitRadius: 18, pointBackgroundColor: '#2742C8', pointBorderColor: '#FCFDFB', pointBorderWidth: 2 },
-        { label: 'Patamar Conectada', data: r.pilares.map(() => PATAMAR), borderColor: '#6F8488', borderWidth: 2, borderDash: [4, 3], pointRadius: 0, pointHitRadius: 0, fill: false }
-      ]
+      labels: r.pilares.flatMap(p => [p.curto, '', '']),
+      datasets: [{
+        data: dados,
+        backgroundColor: CORES_PILAR.flatMap(cor => [cor, trilho, 'transparent']),
+        hoverBackgroundColor: CORES_PILAR.flatMap(cor => [cor, trilho, 'transparent']),
+        borderWidth: 0,
+        hoverOffset: 0
+      }]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      animation: { duration: semMovimento ? 0 : 650, easing: 'easeOutQuart' },
-      scales: {
-        r: {
-          min: 0, max: 100,
-          ticks: { stepSize: 25, display: false },
-          grid: { color: '#D5E0DB' },
-          angleLines: { color: '#D5E0DB' },
-          pointLabels: { color: '#12343B', font: { family: 'Archivo', size: 13, weight: '600' } }
-        }
-      },
+      cutout: '93%',
+      rotation: (VAO / 2) * 360 / (400 + VAO * 4),
+      animation: { duration: semMovimento ? 0 : 1300, easing: 'easeOutQuart' },
       plugins: {
         legend: { display: false },
         tooltip: {
-          filter: i => i.datasetIndex === 0,
+          filter: i => i.dataIndex % 3 === 0,
           displayColors: false,
-          backgroundColor: '#12343B',
-          titleFont: { family: 'Archivo' }, bodyFont: { family: 'Archivo' },
+          backgroundColor: '#0B2127',
+          borderColor: 'rgba(233, 243, 245, .2)',
+          borderWidth: 1,
+          titleFont: { family: 'Geist' }, bodyFont: { family: 'Geist' },
           callbacks: { label: i => `Nota: ${i.raw}%` }
         }
       }
@@ -562,38 +541,61 @@ function aplicarFicha(d) {
   atualizar();
 }
 
+/* Eventos */
+
 montarFormulario();
+irPara(0, { focar: false });
+
+let proximoPasso = 0;
+function avancarEmSeguida() {
+  clearTimeout(proximoPasso);
+  proximoPasso = setTimeout(avancar, semMovimento ? 0 : 300);
+}
+
 $('ficha').addEventListener('input', atualizar);
 $('ficha').addEventListener('change', atualizar);
 $('ficha').addEventListener('submit', e => e.preventDefault());
+$('ficha').addEventListener('click', e => {
+  const opcao = e.target.closest('.opcao');
+  if (opcao && e.target.tagName !== 'INPUT') avancarEmSeguida();
+  const atalho = e.target.closest('[data-ir]');
+  if (atalho) irPara(Number(atalho.dataset.ir));
+});
+document.addEventListener('keydown', e => {
+  const digitando = ['INPUT', 'SELECT'].includes(e.target.tagName) && e.target.type !== 'radio';
+  if ($('ficha').hidden || passo === 0 || digitando || !/^[1-4]$/.test(e.key)) return;
+  const q = PERGUNTAS[passo - 1];
+  document.querySelector(`input[name="${q.id}"][value="${Number(e.key) - 1}"]`).checked = true;
+  atualizar();
+  avancarEmSeguida();
+});
+$('btn-avancar').addEventListener('click', avancar);
+$('btn-voltar').addEventListener('click', () => irPara(passo - 1));
+$('btn-comecar').addEventListener('click', () => abrirFicha(0));
 $('btn-demo').addEventListener('click', () => {
   aplicarFicha(DEMO);
-  $('secao-laudo').scrollIntoView();
+  $('ficha').hidden = true;
+  $('laudo').scrollIntoView();
 });
+$('btn-alterar').addEventListener('click', () => abrirFicha(1));
 $('btn-limpar').addEventListener('click', () => {
   $('ficha').reset();
-  atualizar();
+  abrirFicha(0);
 });
 $('btn-imprimir').addEventListener('click', () => window.print());
-atualizar();
 
-/* Entrada da logo e abertura */
-function iniciarAbertura() {
-  contar($('vit-num'), 38, { de: 0, atraso: 1050, duracao: 800 });
-  setTimeout(() => $('vit-marca').classList.add('marcada'), semMovimento ? 0 : 2500);
-}
-
+/* Entrada da logo */
 function tocarEntrada() {
   const raiz = document.documentElement;
   const intro = $('intro');
   if (semMovimento) {
     intro.remove();
     raiz.classList.remove('intro', 'marca-oculta');
-    iniciarAbertura();
     return;
   }
 
   let encerrada = false;
+  let cronometro;
   const encerrar = () => {
     if (encerrada) return;
     encerrada = true;
@@ -601,21 +603,19 @@ function tocarEntrada() {
     window.removeEventListener('keydown', encerrar);
     intro.classList.add('rodando');
     raiz.classList.remove('intro');
-    iniciarAbertura();
 
     const marca = $('intro-marca');
     const de = marca.getBoundingClientRect();
     const para = $('marca-cabecalho').getBoundingClientRect();
     const escala = para.width / de.width;
     intro.classList.add('voando');
-    marca.style.transform = `translate(${para.left - de.left}px, ${para.top + 20 - de.top}px) scale(${escala})`;
+    marca.style.transform = `translate(${para.left - de.left}px, ${para.top - de.top}px) scale(${escala})`;
     setTimeout(() => {
       raiz.classList.remove('marca-oculta');
       intro.remove();
     }, 800);
   };
 
-  let cronometro;
   const imagens = [...intro.querySelectorAll('img')].map(img => img.decode().catch(() => {}));
   const limite = new Promise(pronto => setTimeout(pronto, 900));
   Promise.race([Promise.all(imagens), limite]).then(() => {
@@ -629,27 +629,11 @@ function tocarEntrada() {
 
 tocarEntrada();
 
-/* O anel da logo gira com a rolagem, como um mostrador */
+/* Os anéis giram com a rolagem, como um mostrador */
 if (!semMovimento) {
-  const anelCabecalho = document.querySelector('#marca-cabecalho .anel');
   let quadro = 0;
   window.addEventListener('scroll', () => {
     cancelAnimationFrame(quadro);
-    quadro = requestAnimationFrame(() => anelCabecalho.style.setProperty('--giro', `${window.scrollY * .35}deg`));
+    quadro = requestAnimationFrame(() => document.documentElement.style.setProperty('--giro', `${window.scrollY * .12}deg`));
   }, { passive: true });
-}
-
-/* A folha de exemplo inclina com o ponteiro */
-if (!semMovimento && window.matchMedia('(hover: hover)').matches) {
-  const abertura = $('abertura');
-  const folhaExemplo = $('vit-folha');
-  abertura.addEventListener('pointermove', e => {
-    const caixa = abertura.getBoundingClientRect();
-    folhaExemplo.style.setProperty('--ry', `${((e.clientX - caixa.left) / caixa.width - .5) * 9}deg`);
-    folhaExemplo.style.setProperty('--rx', `${((e.clientY - caixa.top) / caixa.height - .5) * -7}deg`);
-  });
-  abertura.addEventListener('pointerleave', () => {
-    folhaExemplo.style.setProperty('--ry', '0deg');
-    folhaExemplo.style.setProperty('--rx', '0deg');
-  });
 }
