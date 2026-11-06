@@ -577,9 +577,69 @@ $('btn-limpar').addEventListener('click', () => {
 $('btn-imprimir').addEventListener('click', () => window.print());
 atualizar();
 
-/* Abertura: nota de exemplo, marca-texto e inclinação da folha com o ponteiro */
-contar($('vit-num'), 38, { de: 0, atraso: 1050, duracao: 800 });
-setTimeout(() => $('vit-marca').classList.add('marcada'), semMovimento ? 0 : 2500);
+/* Entrada da logo e abertura */
+function iniciarAbertura() {
+  contar($('vit-num'), 38, { de: 0, atraso: 1050, duracao: 800 });
+  setTimeout(() => $('vit-marca').classList.add('marcada'), semMovimento ? 0 : 2500);
+}
+
+function tocarEntrada() {
+  const raiz = document.documentElement;
+  const intro = $('intro');
+  if (semMovimento) {
+    intro.remove();
+    raiz.classList.remove('intro', 'marca-oculta');
+    iniciarAbertura();
+    return;
+  }
+
+  let encerrada = false;
+  const encerrar = () => {
+    if (encerrada) return;
+    encerrada = true;
+    clearTimeout(cronometro);
+    window.removeEventListener('keydown', encerrar);
+    intro.classList.add('rodando');
+    raiz.classList.remove('intro');
+    iniciarAbertura();
+
+    const marca = $('intro-marca');
+    const de = marca.getBoundingClientRect();
+    const para = $('marca-cabecalho').getBoundingClientRect();
+    const escala = para.width / de.width;
+    intro.classList.add('voando');
+    marca.style.transform = `translate(${para.left - de.left}px, ${para.top + 20 - de.top}px) scale(${escala})`;
+    setTimeout(() => {
+      raiz.classList.remove('marca-oculta');
+      intro.remove();
+    }, 800);
+  };
+
+  let cronometro;
+  const imagens = [...intro.querySelectorAll('img')].map(img => img.decode().catch(() => {}));
+  const limite = new Promise(pronto => setTimeout(pronto, 900));
+  Promise.race([Promise.all(imagens), limite]).then(() => {
+    if (encerrada) return;
+    intro.classList.add('rodando');
+    cronometro = setTimeout(encerrar, 2500);
+  });
+  intro.addEventListener('click', encerrar);
+  window.addEventListener('keydown', encerrar);
+}
+
+tocarEntrada();
+
+/* O anel da logo gira com a rolagem, como um mostrador */
+if (!semMovimento) {
+  const anelCabecalho = document.querySelector('#marca-cabecalho .anel');
+  let quadro = 0;
+  window.addEventListener('scroll', () => {
+    cancelAnimationFrame(quadro);
+    quadro = requestAnimationFrame(() => anelCabecalho.style.setProperty('--giro', `${window.scrollY * .35}deg`));
+  }, { passive: true });
+}
+
+/* A folha de exemplo inclina com o ponteiro */
 if (!semMovimento && window.matchMedia('(hover: hover)').matches) {
   const abertura = $('abertura');
   const folhaExemplo = $('vit-folha');
