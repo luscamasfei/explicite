@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Explicite | Diagnóstico 360º de Maturidade Digital</title>
 <meta name="description" content="Responda 8 perguntas sobre nuvem, sistemas, IA e segurança e receba um laudo de maturidade digital com plano de ação.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2312343B'/%3E%3Cpath d='M10 7h13v4h-9v3h8v4h-8v3h9v4H10z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="icon" type="image/png" href="favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,400..800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
@@ -28,7 +28,10 @@
 
 <header id="abertura" class="abertura nao-imprimir">
   <div class="max-w-6xl mx-auto px-4 sm:px-6">
-    <div class="titulo-largo text-2xl pt-6">Explicite</div>
+    <a href="#abertura" id="marca-cabecalho" class="marca pt-5" aria-label="Explicite">
+      <span class="emblema"><img class="anel" src="logo-anel.png" alt=""><img src="logo-e.png" alt=""></span>
+      <img class="nome" src="logo-nome.png" alt="">
+    </a>
     <div class="abertura-grade">
       <div>
         <h1 class="manchete">
@@ -100,8 +103,8 @@
     </div>
 
     <article id="laudo" class="folha px-5 sm:px-12 py-9 sm:py-12" hidden>
-      <div class="flex flex-wrap justify-between gap-x-6 gap-y-1 border-b-2 border-tinta pb-3 text-sm">
-        <span class="font-bold">Explicite, diagnóstico 360º de maturidade digital</span>
+      <div class="flex flex-wrap items-center justify-between gap-x-6 gap-y-1 border-b-2 border-tinta pb-3 text-sm">
+        <span class="flex items-center gap-3 font-bold"><img src="logo.png" alt="Explicite" class="h-11 w-auto -my-2 -ml-2"><span class="sr-only">Explicite: </span>Diagnóstico 360º de maturidade digital</span>
         <span>Protocolo <span id="l-protocolo"></span>, emitido em <span id="l-data"></span></span>
       </div>
 
