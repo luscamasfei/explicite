@@ -39,10 +39,22 @@ Pequenas e médias empresas sabem que precisam modernizar a operação, mas não
 | RF04 Dashboard | Gráfico radar (Chart.js) e tabela de notas por pilar. |
 | RF05 Laudo | Plano de boas práticas gerado a partir das respostas. |
 | RF06 Demo e exportação | Botões "Carregar caso exemplo" e "Imprimir / salvar laudo em PDF" (`window.print()`). |
-| RNF01 Single-file | Tudo em `index.html`, com Tailwind e Chart.js por CDN. |
+| RNF01 Nuvem estática | Roda 100% no navegador a partir do `index.html`, com Tailwind e Chart.js por CDN e sem etapa de build. CSS e JavaScript ficam em arquivos próprios (ver Estrutura do Repositório). |
 | RNF02 Responsivo | Layout testado em computador e celular. |
 | RNF03 Privacy by Design | Nada é enviado nem salvo. O aviso está no rodapé. |
 | RNF04 Documentação | Este arquivo. |
+
+### Estrutura do Repositório
+
+```text
+├── index.html              Estrutura da página
+├── css/
+│   └── style.css           Identidade visual, animações e impressão
+├── js/
+│   ├── app.js              Perguntas, motor de cálculo, laudo e gráfico
+│   └── tailwind.config.js  Cores e fontes do Tailwind
+└── README.md
+```
 
 ## 🛠 3. IAs Generativas e Ferramentas Utilizadas
 
@@ -55,5 +67,5 @@ Pequenas e médias empresas sabem que precisam modernizar a operação, mas não
 ## 🧠 4. Diário de Construção: Como Construímos e Refinamos o App
 
 1. **Concepção e Engenharia de Prompt:** em vez de digitar um prompt, enviamos à IA os dois PDFs da aula (apresentação e guia de requisitos), que incluem o Prompt Mestre. A IA escolheu a Opção B por ser a que o Prompt Mestre descreve e foi além dele em três pontos: a trava de risco, a indicação de SaaS, PaaS ou IaaS pelo tipo de software e as recomendações por setor e porte.
-2. **Ajustes e Refinamentos Técnicos:** durante a construção, pedimos para renomear o aplicativo com o prompt `O nome do aplicativo tem que ser "Explicite"`. Com isso, mudaram o título, o logo, o carimbo do laudo e o prefixo do protocolo. Depois da primeira publicação, pedimos `Deixe o site o mais bonito possível utilizando CSS e JavaScript`. A IA criou um conceito visual ligado ao nome do app: tarjas que se abrem a cada resposta, marca-texto, carimbo com textura de tinta e contagem animada das notas, respeitando quem prefere menos movimento. Os testes automatizados em navegador conferiram os cálculos, a trava de risco, a atualização do laudo e a versão para impressão.
+2. **Ajustes e Refinamentos Técnicos:** durante a construção, pedimos para renomear o aplicativo com o prompt `O nome do aplicativo tem que ser "Explicite"`. Com isso, mudaram o título, o logo, o carimbo do laudo e o prefixo do protocolo. Depois da primeira publicação, pedimos `Deixe o site o mais bonito possível utilizando CSS e JavaScript`. A IA criou um conceito visual ligado ao nome do app: tarjas que se abrem a cada resposta, marca-texto, carimbo com textura de tinta e contagem animada das notas, respeitando quem prefere menos movimento. Por fim, pedimos `Deixe o repositorio mais organizado separando o CSS em outro arquivo e o js em outro arquivo também`, o que tirou CSS e JavaScript do `index.html`. Os testes automatizados em navegador conferiram os cálculos, a trava de risco, a atualização do laudo e a versão para impressão.
 3. **Principal Aprendizado:** _[Preencher com o seu aprendizado pessoal sobre Transformação Digital, Nuvem e IA.]_
