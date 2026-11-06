@@ -2,6 +2,8 @@
 
 # 🚀 Explicite — Consultoria em Transformação Digital
 
+🌐 **Português** | [English](README.en.md)
+
 🔗 **Acesse o Aplicativo Online (GitHub Pages):** [Clique aqui para abrir o App](https://luscamasfei.github.io/explicite/)
 
 ## 👥 Especialistas Responsáveis (Autores)
@@ -58,7 +60,8 @@ Pequenas e médias empresas sabem que precisam modernizar a operação, mas não
 ├── logo-e.png           Camada do E, usada nas animações
 ├── logo-nome.png        Nome em versão clara, para fundo escuro
 ├── favicon.png          Ícone da aba do navegador
-└── README.md
+├── README.md            Documentação em português
+└── README.en.md         Documentação em inglês
 ```
 
 ## 🛠 3. IAs Generativas e Ferramentas Utilizadas
