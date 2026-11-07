@@ -380,7 +380,9 @@ function atualizarNavegacao(f) {
   const respondida = passo > 0 && f.respostas[PERGUNTAS[passo - 1].id] !== undefined;
   $('btn-voltar').hidden = passo === 0;
   $('btn-avancar').disabled = passo === 0 ? !cadastroOk : !respondida;
-  $('btn-avancar').textContent = passo === 0 ? 'Começar' : passo === TOTAL ? 'Ver laudo' : 'Próxima';
+  /* O Safari descarta o clique se o texto do botão for trocado entre apertar e soltar */
+  const rotulo = passo === 0 ? 'Começar' : passo === TOTAL ? 'Ver laudo' : 'Próxima';
+  if ($('btn-avancar').textContent !== rotulo) $('btn-avancar').textContent = rotulo;
   $('dica').textContent = passo === 0
     ? (cadastroOk ? '' : `Falta preencher: ${juntar(pendenciasCadastro(f))}.`)
     : `${passo} de ${TOTAL}`;
